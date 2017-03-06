@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <script src="./js/flexible.js"></script>
+        <link rel="stylesheet" type="text/css" href="./css/mainHead.css">
+        <link rel="stylesheet" type="text/css" href="./css/setting.css">
+        <link rel="stylesheet" type="text/css" href="./css/friend.css">
+    </head>
+    <body>
+        <div id="musicListBox">
+        	<div id="master">
+        		<div id="masterPic">
+        			<img src="">
+        		</div>
+        		<div id="masterName">Zxy</div>
+        	</div>
+        	<div id="choiceMod">
+        		<span>随机播放</span>
+        	</div>
+        	<div id="musicClass">
+        	    <div id="mcList" class="dropList">
+        	        <div class="placeHold">我喜欢</div>
+        	        <div class="options">
+        	        	<ul></ul>
+        	        </div>
+        	    </div>
+                <div id="newList"></div>
+        	</div>
+        	<ul id="mcListDet">
+        		<li class="sigMusic">
+        			<span>xxxx</span>
+        		</li>
+        	</ul>
+        </div>
+        <canvas id="visulBg"></canvas>
+        <div id="music">
+        	<div id="musicList" class="btnFuc icon"></div>
+        	<div id="friendList" class="btnFuc icon"></div>
+        	<div id="userSetting" class="btnFuc icon">
+                <span class="setOne"></span>
+                <span class="setTwo"></span>  
+            </div>
+        	<div id="musicSearch" class="btnFuc icon"></div>
+            <div id="timeLine">
+            	<div id="timeNow"></div>
+            </div>
+            <canvas id="danmuCanvas"></canvas>
+            <div id="musicInfo">
+                <div id="musicPic">
+                	<img src="" alt="musicPic">
+                </div>
+                <div id="musicName">Fucker Music</div>
+                <div id="musicAuthor">Zxy</div>
+                <div id="iLove"></div>
+            </div>
+            <ul id="musicLrc">
+            	<li class="l">xxxx</li>
+            	<li class="l">xxxxxx</li>
+            	<li class="l">xxxx</li>
+            	<li class="r">xxxx</li>
+            	<li class="c">xxxx</li>
+            	<li class="c">xxxx</li>
+            	<li class="c">xxxx</li>
+            	<li class="c">xxxx</li>
+            	<li class="c">xxxx</li>
+            </ul>
+            <div id="ctrl">
+                <div id="danmuInput">
+                	<input type="text" name="danmu" id="danmu"     placeholder="弹幕发射器" />
+                	<label for="danmu" class="danmuIpt"></label>
+                </div>
+                <div id="musicControl">  
+                    <a class="icon">
+                        <span id="pre"></span>
+                    </a>
+                    <a class="icon">
+                        <span id="start"></span>
+                    </a>
+                    <a class="icon">
+                        <span id="next"></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div id="userSettingBox">
+            <label id="userSecret" class="userCose" for="secretRadio">用户设置</label>
+            <label id="yourStyle" class="userCose" for="styleRadio">样式设置</label>
+            <input type="radio" checked name="slider" id="secretRadio">
+        	<input type="radio" name="slider" id="styleRadio">
+        	<div id="setDet">
+        		<ul id="setBox">
+        			<li class="settingList">
+        				<div class="setHead">
+        					<span>用户设置</span>
+        					<a id="modify">
+        						<i></i>
+        					</a>
+        				</div>
+        				<div class="listDet">
+        					<div id="userHead" class="twoBile">
+        						<div class="introduce">头像:</div>
+        						<div id="userHeadBox">
+        							<img src="" alt="userHead">
+        						</div>
+        						<a href="javascript:;" class="file userMod">选择文件
+        						    <input id="headSet" type="file">
+        						</a>
+        					</div>
+        					<div id="userNickname" class="oneBile">
+        						<span class="introduce">昵称:</span>
+        						<div class="lastUserMod">xxx</div>
+        						<span class="inputBox userMod">
+        						    <input type="text" name="nickname" class="userMod" id="nameSet">
+        						    <label class="inputLabel userMod" for="nameSet"></label>
+        						</span>
+        					</div>
+        					<div id="userPrivacy" class="userMod twoBile">
+        						<div id="lastP">
+        							<span class="introduce">旧密码:</span>
+        							<span class="inputBox">
+        							    <input type="password" name="passwordLast"  id="passwordLast">
+        						        <label class="inputLabel" for="passwordLast"></label>
+        						    </span>
+        						</div>
+        						<div id="newP">
+        							<span class="introduce">新密码:</span>
+        							<span class="inputBox">
+        						        <input type="password" name="passwordNew" id="passwordNew">
+        						        <label class="inputLabel" for="passwordNew"></label>
+        						    </span>
+        						</div>
+        					</div>
+        					<div id="sercetCfm" class="userConfirm userMod">确定</div>
+        				</div>
+        			</li>
+        			<li class="settingList">
+        				<div class="setHead">
+        					<span>样式设置</span>
+        				</div>
+        				<div class="listDet">
+        					<div id="fontShow">福</div>
+        					<div id="fontSize" class="oneBile">
+        						<span class="introduce">大小:</span>
+        						<input type="range" name="fontSize" id="fontSizeDet">
+        					</div>
+        					<div id="fontColor" class="oneBile">
+        						<span class="introduce">颜色:</span>
+        						<input type="color" name="fontColor" id="fontColorDet">
+        					</div>
+        					<div id="fontFamily" class="dropBile">
+        						<span class="mv">字体族</span>
+        						<div id="fontFamilyDet" class="dropList">
+        	                        <div class="placeHold">我喜欢</div>
+        	                        <div class="options">
+        	        	                <ul></ul>
+        	                        </div>
+        	                    </div>
+        					</div>
+        					<div id="musicVisual" class="dropBile">
+        						<span class="mv">音乐可视化</span>
+        						<div id="musicVisualDet" class="dropList">
+        	                        <div class="placeHold">我喜欢</div>
+        	                        <div class="options">
+        	        	                <ul></ul>
+        	                        </div>
+        	                    </div>
+        					</div>
+                            <div id="styleCfm" class="userConfirm">确定</div>
+        				</div>
+        			</li>
+        		</ul>
+        	</div>
+        </div>
+        <div id="friendListBox">
+            <div id="me">
+                <div id="mePic">
+                    <img src="">
+                </div>
+                <div id="meNickname">Zxy</div>
+            </div>
+            <div id="friendChocie">
+                <label for="myIdol" class="fd">关注</label>
+                <label for="myFan" class="fd">粉丝</label>
+                <input type="radio" checked id="myIdol" name="slider">
+                <input type="radio" id="myFan" name="slider">
+                <div id="myBox">
+                    <ul>
+                        <li class="myFed">
+                            <div class="friend">
+                                <div class="friendPic">
+                                    <img src="">
+                                </div>
+                                <div class="friendNickname">sdsd</div>
+                            </div>
+                        </li>
+                        <li class="myFed">
+                            <div class="friend">
+                                <div class="friendPic">
+                                    <img src="">
+                                </div>
+                                <div class="friendNickname"></div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div id="searchSquare"></div>
+        <script src="./js/main.js"></script>
+    </body>
+</html>
