@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-02-23 17:22:24
 * @Last Modified by:   10261
-* @Last Modified time: 2017-03-08 19:36:26
+* @Last Modified time: 2017-03-08 19:55:14
 */
 
 'use strict';
@@ -159,8 +159,13 @@ function start() {
 }
 start();
 
+
+
 var mc = new Music({
-	size: 16
+	size: 16,
+	visual: function(){
+		//这里实现可视化的详细操作
+	}
 
 })
 mc.load({

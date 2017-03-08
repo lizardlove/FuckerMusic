@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-03-06 21:25:57
 * @Last Modified by:   10261
-* @Last Modified time: 2017-03-08 19:06:57
+* @Last Modified time: 2017-03-08 19:59:53
 */
 
 'use strict';
@@ -98,6 +98,8 @@ Music.prototype.visualize = function () {
 		self.analyser.getByteFrequencyData(arr);
 		//self.visual(arr);
 		//console.log(arr);
+		self.currentTime = Music.ac.currentTime;
+		console.log(self.currentTime);
 		requestAnimationFrame(v);
 	}
 
