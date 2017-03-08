@@ -2,120 +2,104 @@
 * @Author: 10261
 * @Date:   2017-03-06 21:25:57
 * @Last Modified by:   10261
-* @Last Modified time: 2017-03-07 21:40:47
+* @Last Modified time: 2017-03-08 19:06:57
 */
 
 'use strict';
-function Music (option) {
-
+function Music(option) {
 	this.source = null;
 
-	this.audio = new Audio();
+	this.buffer = [];
 
-	this.audioSource = Music.ac.createMediaElementSource(this.audio);
-
-	this.audioSource = this.source;
-
-	this.onended = option.onended;
-
-	this.size = option.size||32;
-
-	//this.visual = option.visual;
-
-	this.currentTime = Music.ac.currentTime;
-
-	this.gainNode = Music.ac[Music.ac.createGain ? "createGain" : "createGainNode"]();
+	this.count = 0;
 
 	this.analyser = Music.ac.createAnalyser();
 
-	//this.delayNode.delayTime.value = 2;
+	this.size = option.size;
 
-	//this.audioSource.connect(this.analyser);
+	this.analyser.fftSize = this.size * 2;
 
-	this.analyser.connect(this.gainNode);
-
-	//this.delayNode.connect(this.gainNode);
+	this.gainNode = Music.ac[Music.ac.createGain ? "createGain" : "createGainNode"]();
 
 	this.gainNode.connect(Music.ac.destination);
 
-	this.xhr = new window.XMLHttpRequest();
+	this.analyser.connect(this.gainNode);
 
-	Music.visualize(this);
+	this.currentTime = 0;
+
+	this.duration = 0;
+
+	//this.visual = option.visual;
+
+	this.visualize();
 }
+Music.ac = new (window.AudioContext||window.webkitAudioContext)();
 
-Music.ac = new (window.AudioContext ||window.webkitAudioContext || window.mozAudioContext)();
-
-Music.load = function (xhr, obj, fun) {
-
-	// xhr.open("POST", obj.path, true);
-
-	// xhr.responseType = "arraybuffer";
-
-	// xhr.onload = function () {
-	// 	fun.call(xhr.response);
-	// }
-
-	// xhr.send(obj);
-	ajax({
-		method: 'POST',
-		data: obj,
-		responseType: "arraybuffer",
-		url: obj.path,
-		load: function (data) {}
-	})
-
-}
-
-Music.play = function (mc) {
-	mc.source.connect(mc.analyser);
-	mc.audio.play();
-	mc.audio.onended = mc.onended;
-}
-
-Music.stop = function (mc) {
-	mc.audio.pause();
-	mc.audio.onended = window.undefined;
-}
-
-Music.visualize = function (mc) {
-	mc.analyser.fftSize = mc.size * 2;
-
-	var arr = new Uint8Array(mc.analyser.frequencyBinCount);
-
-	var requestAnimationFrame = window.requestAnimationFrame ||
-	                            window.webkitRequestAnimationFrame ||
-	                            window.oRequestAnimationFrame ||
-	                            window.mzRequestAnimationFrame;
-    
-    function v () {
-    	mc.analyser.getByteFrequencyData(arr);
-    	//mc.visual.call(arr);
-    	//console.log(arr);
-    	requestAnimationFrame(v);
-    }
-
-    requestAnimationFrame(v);
-}
-
-Music.prototype.decode = function (arraybuffer, fun) {
+Music.prototype.load = function (obj) {
 	var self = this;
-
-	Music.ac.decodeAudioData(arraybuffer, function (buffer) {
-		var bufferSourceNode = Music.ac.createBufferSource();
-		bufferSourceNode.buffer = buffer;
-		fun.call(bufferSourceNode);
-	}, function (err) {
-		console.log(err);
+	ajax({
+		url: obj.path,
+		method: "POST",
+		responseType: "arraybuffer",
+		data: obj,
+		load: function (data) {
+			self.decode(data);
+		}
 	});
 }
 
-Music.prototype.start = function (obj) {
+Music.prototype.decode = function (arraybuffer) {
+	var self = this;
+	var n = ++this.count;
+	this.source && this.stop();
+	Music.ac.decodeAudioData(arraybuffer, function (buffer) {
+		if (n != self.count) return;
+		var bufferSource = Music.ac.createBufferSource();
+		bufferSource.buffer = buffer;
+		self.buffer = buffer;
+		self.duration = buffer.duration;
+		bufferSource.connect(self.analyser);
+		bufferSource[bufferSource.start ? "start" : "noteOn"](0);
+		self.source = bufferSource;
+	}, function (err) {
+		console.log(err);
+	})
+}
+
+Music.prototype.ret = function () {
+	var bs = Music.ac.createBufferSource();
+	bs.buffer = this.buffer;
+	bs.connect(this.analyser);
+	this.source = bs;
+}
+Music.prototype.play = function (num) {
+	var time;
+	this.ret();
+	if (num === undefined) {
+		time = this.currentTime;
+	} else {
+		time = num;
+	}
+	console.log(time);
+	this.source[this.source.start ? "start" : "noteOn"](0, time, mc.duration);
+}
+Music.prototype.stop = function () {
+	this.source[this.source.stop ? "stop" : "noteOff"]();
+	this.currentTime = Music.ac.currentTime;
+}
+Music.prototype.changeVolume = function (num) {
+	this.gainNode.gain.value = num * num * 0.01;
+}
+Music.prototype.visualize = function () {
+	var arr = new Uint8Array(this.analyser.frequencyBinCount);
 	var self = this;
 
-	Music.load(self.xhr, obj, function () {
-		self.decode(this, function () {
-			self.source = this;
-			Music.play(self);
-		})
-	})
+	function v () {
+		self.analyser.getByteFrequencyData(arr);
+		//self.visual(arr);
+		//console.log(arr);
+		requestAnimationFrame(v);
+	}
+
+	requestAnimationFrame(v);
 }
