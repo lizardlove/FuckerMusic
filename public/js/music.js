@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-03-06 21:25:57
 * @Last Modified by:   10261
-* @Last Modified time: 2017-03-08 19:59:53
+* @Last Modified time: 2017-03-09 18:01:12
 */
 
 'use strict';
@@ -12,6 +12,10 @@ function Music(option) {
 	this.buffer = [];
 
 	this.count = 0;
+
+	this.paused = false;
+
+	this.timeNow = option.timeNow || null;
 
 	this.analyser = Music.ac.createAnalyser();
 
@@ -25,9 +29,13 @@ function Music(option) {
 
 	this.analyser.connect(this.gainNode);
 
+	this.startTime = 0;
+
 	this.currentTime = 0;
 
 	this.duration = 0;
+
+	this.staticTime = 0;
 
 	//this.visual = option.visual;
 
@@ -56,11 +64,14 @@ Music.prototype.decode = function (arraybuffer) {
 		if (n != self.count) return;
 		var bufferSource = Music.ac.createBufferSource();
 		bufferSource.buffer = buffer;
-		self.buffer = buffer;
-		self.duration = buffer.duration;
 		bufferSource.connect(self.analyser);
 		bufferSource[bufferSource.start ? "start" : "noteOn"](0);
+
+		self.startTime = new Date();
+		self.startTime = self.startTime.getTime();
 		self.source = bufferSource;
+		self.buffer = buffer;
+		self.duration = buffer.duration;
 	}, function (err) {
 		console.log(err);
 	})
@@ -80,12 +91,15 @@ Music.prototype.play = function (num) {
 	} else {
 		time = num;
 	}
-	console.log(time);
 	this.source[this.source.start ? "start" : "noteOn"](0, time, mc.duration);
+	this.startTime = new Date();
+	this.startTime = this.startTime.getTime();
+	this.staticTime = this.currentTime;
+	this.paused = false;
 }
 Music.prototype.stop = function () {
 	this.source[this.source.stop ? "stop" : "noteOff"]();
-	this.currentTime = Music.ac.currentTime;
+	this.paused = true;
 }
 Music.prototype.changeVolume = function (num) {
 	this.gainNode.gain.value = num * num * 0.01;
@@ -97,11 +111,21 @@ Music.prototype.visualize = function () {
 	function v () {
 		self.analyser.getByteFrequencyData(arr);
 		//self.visual(arr);
-		//console.log(arr);
-		self.currentTime = Music.ac.currentTime;
-		console.log(self.currentTime);
+		if (!self.paused) {
+			self.getCurrentTime();
+			if (self.timeNow !== null) {
+			    self.timeNow.style.width = (self.currentTime / self.duration) * 100 + "%";
+			}
+		}
 		requestAnimationFrame(v);
 	}
 
 	requestAnimationFrame(v);
+}
+
+Music.prototype.getCurrentTime = function () {
+	var now = new Date();
+	now = now.getTime();
+	var watch =(now - this.startTime) / 1000;
+	this.currentTime = this.staticTime + watch;
 }

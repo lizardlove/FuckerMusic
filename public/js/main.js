@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-02-23 17:22:24
 * @Last Modified by:   10261
-* @Last Modified time: 2017-03-08 19:55:14
+* @Last Modified time: 2017-03-09 17:58:01
 */
 
 'use strict';
@@ -26,6 +26,7 @@ var master = {
 	}
 }
 
+var _width = document.getElementsByTagName('html')[0].clientWidth;
 var musicVl = ["炫彩音阶", "梦幻气泡"];
 var fontFamily = ["微软雅黑", "苹果斜体"];
 
@@ -154,32 +155,38 @@ function selectGroup () {
 
 
 function start() {
+    timeJump();
     selectGroup();
     pageChange();
 }
 start();
 
+function timeJump() {
+	var timeLine = $("#timeLine");
+	timeLine.addEventListener('click', function (e) {
+		if (mc.duration !== 0) {
+			mc.stop();
+			var time = (e.clientX / _width) * mc.duration;
+		    mc.currentTime = time;
+		    mc.play(time);
+		    console.log(mc.currentTime / mc.duration);
+		}
+	});
+}
+
 
 
 var mc = new Music({
 	size: 16,
+	timeNow: $("#timeNow"),
 	visual: function(){
 		//这里实现可视化的详细操作
 	}
-
-})
+});
 mc.load({
 	path: '/api',
 	url: "http://m2.music.126.net/nJ45UVWz0VJfh_yrNVR6MQ==/3402988503925654.mp3"
 });
-console.log("x");
-setTimeout(function () {
-	mc.stop();
-	console.log(mc.currentTime);
-	setTimeout(function () {
-		mc.play();
-	},2000);
-}, 20000);
 
 
 
