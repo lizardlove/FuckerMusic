@@ -2,10 +2,11 @@
 * @Author: 10261
 * @Date:   2017-02-23 17:22:24
 * @Last Modified by:   10261
-* @Last Modified time: 2017-03-09 17:58:01
+* @Last Modified time: 2017-03-09 22:41:11
 */
 
 'use strict';
+
 function $(dom) {
 	return document.querySelector(dom);
 };
@@ -13,6 +14,31 @@ function $(dom) {
 function $$(dom) {
 	return document.querySelectorAll(dom);
 }
+
+function addEvent(obj, type, fun, bool) {
+	var _event = function (event) {
+		var type = event.type;
+		if (type == "DOMMouseScroll" || type == "mousewheel") {
+			event.delta = (event.wheelDelta) ? event.wheelDelta / 120 :　-(event.detail || 0) / 3;
+		}
+		return event;
+	};
+	if (window.addEventListener) {
+			obj.addEventListener(type, function (e) {
+				fun.call(this, _event(e));
+			}, bool);
+	} else if (window.attachEvent) {
+		if (type = "mousewheel") {
+			type = "DOMMouseScroll";
+		}
+			if (type = "mousewheel") {
+				type = "DOMMouseScroll";
+			}
+			obj.attachEvent("on" + type, function (e) {
+				fun.call(obj, _event(e));
+			})
+	}
+};
 
 requestAnimationFrame = window.requestAnimationFrame || 
                         window.webkitRequestAnimationFrame || 
@@ -50,10 +76,10 @@ function musicListSelect(dom, list) {
 	addList(dom);
 	var lis = $$(dom + " li");
 	lis.forEach(function (li) {
-		li.addEventListener('click', function () {
+		addEvent(li, 'click', function() {
 			placeHold.innerHTML = this.innerHTML;
 			addList(dom);
-		});
+		})
 	});
 }
 
@@ -79,7 +105,7 @@ function moreSelect(dom, list) {
 		var newLi = document.createElement("li");
 		newLi.innerHTML = list[i];
 		placeHold.innerHTML = list[i];
-		newLi.addEventListener('click', function () {
+		addEvent(newLi, 'click', function () {
 			placeHold.innerHTML = this.innerHTML;
 		});
 		$(dom + " ul").appendChild(newLi);
@@ -87,7 +113,7 @@ function moreSelect(dom, list) {
 }
 
 function calW(dom) {
-	$(dom).addEventListener("click", function () {
+	addEvent($(dom), 'click', function () {
 		if (pageControl.pageFlag == 0) {
 			$(dom + "Box").style.width = "350px";
 			$("#music").style.width = "calc(100% - 350px)";
@@ -96,7 +122,7 @@ function calW(dom) {
 			clearWidth();
 			pageControl.pageFlag = 0;
 		}
-	})
+	});
 }
 
 function clearWidth () {
@@ -109,13 +135,13 @@ function clearWidth () {
 function choiceMod () {
 	var choice = $("#choiceMod span");
 	choice.innerHTML = pageControl.mod.det[pageControl.mod.flag];
-	choice.addEventListener('click', function () {
+	addEvent(choice, 'click', function () {
 		pageControl.mod.flag++;
 		if(pageControl.mod.flag == 4) {
 			pageControl.mod.flag = 0;
 		}
 		choice.innerHTML = pageControl.mod.det[pageControl.mod.flag];
-	});
+	})
 }
 
 function modifyAround (stateOne, stateTwo) {
@@ -129,7 +155,7 @@ function modifyAround (stateOne, stateTwo) {
 function pageChange () {
 	
 	var modify = $("#modify");
-	modify.addEventListener('click', function () {
+	addEvent(modify, function () {
 		if (pageControl.modifyFlag == 0) {
 			modifyAround("none", "inline-block");
 			pageControl.modifyFlag ++;
@@ -153,17 +179,9 @@ function selectGroup () {
 	moreSelect("#fontFamilyDet", fontFamily);
 }
 
-
-function start() {
-    timeJump();
-    selectGroup();
-    pageChange();
-}
-start();
-
 function timeJump() {
 	var timeLine = $("#timeLine");
-	timeLine.addEventListener('click', function (e) {
+	addEvent(timeLine, 'click', function (e) {
 		if (mc.duration !== 0) {
 			mc.stop();
 			var time = (e.clientX / _width) * mc.duration;
@@ -174,7 +192,20 @@ function timeJump() {
 	});
 }
 
+function start() {
+    timeJump();
+    musicControl();
+    selectGroup();
+    pageChange();
+}
+start();
 
+function musicControl () {
+	var pre = $("#pre");
+	var next = $("#next");
+	var coreControl = $("#coreControl");
+	var music = $("#music");
+}
 
 var mc = new Music({
 	size: 16,
@@ -187,7 +218,6 @@ mc.load({
 	path: '/api',
 	url: "http://m2.music.126.net/nJ45UVWz0VJfh_yrNVR6MQ==/3402988503925654.mp3"
 });
-
 
 
 

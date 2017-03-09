@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-03-06 21:25:57
 * @Last Modified by:   10261
-* @Last Modified time: 2017-03-09 18:01:12
+* @Last Modified time: 2017-03-09 20:57:12
 */
 
 'use strict';
@@ -129,3 +129,5 @@ Music.prototype.getCurrentTime = function () {
 	var watch =(now - this.startTime) / 1000;
 	this.currentTime = this.staticTime + watch;
 }
+
+

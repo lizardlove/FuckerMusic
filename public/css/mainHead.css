@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-02-23 17:23:11
 * @Last Modified by:   10261
-* @Last Modified time: 2017-03-06 17:19:40
+* @Last Modified time: 2017-03-09 20:04:57
 */
 html,body,div,span, input{
 	margin: 0;
@@ -541,7 +541,7 @@ a #next::after {
 	top: 6px;
 	right: 9px;
 }
-a #start::before, a #start::after {
+a .pause::before, a .pause::after {
 	content: '';
 	height: 48px;
 	width: 9px;
@@ -551,10 +551,20 @@ a #start::before, a #start::after {
 	top: 6px;
 	left: 15px;
 }
-a #start::after {
+a .pause::after {
 	left: 36px;
 }
-
+a .start::before {
+	content: '';
+	height: 0;
+	width: 0;
+	border: 30px transparent solid;
+	border-right-width: 0;
+	border-left-color: #333;
+	position: absolute;
+	left: 15px;
+	top: 0px;
+}
 
 
 /*功能按钮*/
