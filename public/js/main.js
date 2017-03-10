@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-02-23 17:22:24
 * @Last Modified by:   10261
-* @Last Modified time: 2017-03-09 22:41:11
+* @Last Modified time: 2017-03-10 17:51:20
 */
 
 'use strict';
@@ -44,11 +44,67 @@ requestAnimationFrame = window.requestAnimationFrame ||
                         window.webkitRequestAnimationFrame || 
                         window.mozRequestAnimationFrame;
 
-var master = {
+var master = {//测试
+	name: "zxy", 
+	pic: "data:asdasdasdadad",
+	id: 1,
+	font: {
+		size: 20,
+		color: "#333",
+		family: "苹果斜体"
+	},
+	canvas: "炫彩音阶",
 	list: {
-		love: ["xxx","xsdsaf","xsdasaa","sadasfaf"],
-		R: ["xxx","xsdsaf","xsdasaa","sadasfaf", "xxx","xsdsaf","xsdasaa","sadasfaf"]
-
+		love: [{
+			name: 'xxx',
+			author: 'xxaas',
+			pic: 'xxdad',
+			src: 'xsd',
+			lrc: 'xsddds',
+		},{
+			name: 'xxx',
+			author: 'xxaas',
+			pic: 'xxdad',
+			src: 'xsd',
+			lrc: 'xsddds',
+		},{
+			name: 'xxx',
+			author: 'xxaas',
+			pic: 'xxdad',
+			src: 'xsd',
+			lrc: 'xsddds',
+		},{
+			name: 'xxx',
+			author: 'xxaas',
+			pic: 'xxdad',
+			src: 'xsd',
+			lrc: 'xsddds',
+		}],
+		R: [{
+			name: 'xxx',
+			author: 'xxaas',
+			pic: 'xxdad',
+			src: 'xsd',
+			lrc: 'xsddds',
+		},{
+			name: 'xxx',
+			author: 'xxaas',
+			pic: 'xxdad',
+			src: 'xsd',
+			lrc: 'xsddds',
+		},{
+			name: 'xxx',
+			author: 'xxaas',
+			pic: 'xxdad',
+			src: 'xsd',
+			lrc: 'xsddds',
+		}，{
+			name: 'xxx',
+			author: 'xxaas',
+			pic: 'xxdad',
+			src: 'xsd',
+			lrc: 'xsddds',
+		}]
 	}
 }
 
@@ -59,6 +115,8 @@ var fontFamily = ["微软雅黑", "苹果斜体"];
 var pageControl = {
 	pageFlag: 0,
 	modifyFlag: 0,
+	volume: 0,
+	order: 0,
 	mod: {
 		flag: 0,
 		det: ["随机播放", "单曲循环", "顺序播放", "列表循环"]
@@ -92,7 +150,7 @@ function addList(dom) {
 		    var newLi = document.createElement("li");
 		    var newSpan = document.createElement("span");
 		    newLi.className = "sigMusic";
-		    newSpan.innerHTML = listDet[i];
+		    newSpan.innerHTML = listDet[i].name;
 		    newLi.appendChild(newSpan);
 		    $(dom + "Det").appendChild(newLi);
 	    }
@@ -205,6 +263,30 @@ function musicControl () {
 	var next = $("#next");
 	var coreControl = $("#coreControl");
 	var music = $("#music");
+	addEvent(pre, 'click', function () {
+		var x = pageControl.mod.flag;
+		var list = master.list[$("#mcList .placeHold").innerHTML];
+	})
+	addEvent(coreControl, 'click', function () {
+		if (mc.paused) {
+			mc.play();
+			coreControl.className = "start";
+		} else {
+			mc.stop();
+			coreControl.className = "pause";
+		}
+	});
+
+	addEvent(music, "mousewheel", function (e) {
+		if (e.delta < 0) {
+			if (pageControl.volume >= 0) {
+				pageControl.volume --;
+			}
+		} else {
+			pageControl.volume ++;
+		}
+	});
+
 }
 
 var mc = new Music({
