@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-02-23 17:23:11
 * @Last Modified by:   10261
-* @Last Modified time: 2017-03-09 20:04:57
+* @Last Modified time: 2017-03-10 21:21:28
 */
 html,body,div,span, input{
 	margin: 0;
@@ -499,7 +499,7 @@ li.sigMusic {
 	transition: transform 0.2s;
 }
 
-a #pre::before {
+#pre span::before {
 	content: '';
 	height: 0;
 	width: 0;
@@ -510,7 +510,7 @@ a #pre::before {
 	top: 5px;
 	left: 15px;
 }
-a #pre::after {
+#pre span::after {
 	content: '';
 	height: 48px;
 	width: 6px;
@@ -520,7 +520,7 @@ a #pre::after {
 	top: 6px;
 	left: 9px;
 }
-a #next::before {
+#next span::before {
 	content: '';
 	height: 0;
 	width: 0;
@@ -531,7 +531,7 @@ a #next::before {
 	top: 5px;
 	right: 15px;
 }
-a #next::after {
+#next span::after {
 	content: '';
 	height: 48px;
 	width: 6px;
@@ -541,7 +541,7 @@ a #next::after {
 	top: 6px;
 	right: 9px;
 }
-a .pause::before, a .pause::after {
+.pause::before, .pause::after {
 	content: '';
 	height: 48px;
 	width: 9px;
@@ -551,10 +551,10 @@ a .pause::before, a .pause::after {
 	top: 6px;
 	left: 15px;
 }
-a .pause::after {
+.pause::after {
 	left: 36px;
 }
-a .start::before {
+.start::before {
 	content: '';
 	height: 0;
 	width: 0;

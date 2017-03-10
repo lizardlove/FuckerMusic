@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-02-23 17:22:24
 * @Last Modified by:   10261
-* @Last Modified time: 2017-03-10 17:51:20
+* @Last Modified time: 2017-03-11 00:13:55
 */
 
 'use strict';
@@ -56,53 +56,28 @@ var master = {//测试
 	canvas: "炫彩音阶",
 	list: {
 		love: [{
-			name: 'xxx',
+			name: 'a',
 			author: 'xxaas',
 			pic: 'xxdad',
-			src: 'xsd',
+			src: 'http://m2.music.126.net/nJ45UVWz0VJfh_yrNVR6MQ==/3402988503925654.mp3',
 			lrc: 'xsddds',
 		},{
-			name: 'xxx',
+			name: 'b',
 			author: 'xxaas',
 			pic: 'xxdad',
-			src: 'xsd',
+			src: 'http://m2.music.126.net/h5sli9SrGADPLn-JSMyfIg==/3420580731402332.mp3',
 			lrc: 'xsddds',
 		},{
-			name: 'xxx',
+			name: 'c',
 			author: 'xxaas',
 			pic: 'xxdad',
-			src: 'xsd',
+			src: 'http://m2.music.126.net/DMGuG62iX4w-aAmTnHzkcQ==/3250156389859817.mp3',
 			lrc: 'xsddds',
 		},{
-			name: 'xxx',
+			name: 'd',
 			author: 'xxaas',
 			pic: 'xxdad',
-			src: 'xsd',
-			lrc: 'xsddds',
-		}],
-		R: [{
-			name: 'xxx',
-			author: 'xxaas',
-			pic: 'xxdad',
-			src: 'xsd',
-			lrc: 'xsddds',
-		},{
-			name: 'xxx',
-			author: 'xxaas',
-			pic: 'xxdad',
-			src: 'xsd',
-			lrc: 'xsddds',
-		},{
-			name: 'xxx',
-			author: 'xxaas',
-			pic: 'xxdad',
-			src: 'xsd',
-			lrc: 'xsddds',
-		}，{
-			name: 'xxx',
-			author: 'xxaas',
-			pic: 'xxdad',
-			src: 'xsd',
+			src: 'http://m2.music.126.net/eAT6BEj_mz1Y5W-APFXRsw==/3433774824121252.mp3',
 			lrc: 'xsddds',
 		}]
 	}
@@ -117,6 +92,10 @@ var pageControl = {
 	modifyFlag: 0,
 	volume: 0,
 	order: 0,
+	musicObj: {
+		path: '/api',
+		url: ''
+	},
 	mod: {
 		flag: 0,
 		det: ["随机播放", "单曲循环", "顺序播放", "列表循环"]
@@ -150,6 +129,19 @@ function addList(dom) {
 		    var newLi = document.createElement("li");
 		    var newSpan = document.createElement("span");
 		    newLi.className = "sigMusic";
+		    addEvent(newLi, 'click', function () {
+		    	var list = master.list[$("#mcList .placeHold").innerHTML];
+		    	var self = this;
+		    	console.log(self.childNodes[0].innerHTML);
+		    	list.forEach(function (x) {
+		    		
+		    		if (self.childNodes[0].innerHTML == x.name) {
+		    			pageControl.musicObj.url = x.src;
+		    		}
+		    	})
+		    	mc.stop();
+		    	mc.load(pageControl.musicObj);
+		    })
 		    newSpan.innerHTML = listDet[i].name;
 		    newLi.appendChild(newSpan);
 		    $(dom + "Det").appendChild(newLi);
@@ -257,41 +249,104 @@ function start() {
     pageChange();
 }
 start();
+function preNext (flag) {
+	var x = pageControl.mod.flag;
+	var list = master.list[$("#mcList .placeHold").innerHTML];
+	switch (x) {
+		case 0: {
+			randomMusic(list);
+			break;
+		}
+		case 1: {
+			randomMusic(list);
+			break;
+		}
+		default: {
+			if (flag == 0) {
+				pageControl.order ++;
+			} else {
+				pageControl.order --;
+			}
+			pageControl.musicObj.url = list[pageControl.order].src;
+			mc.stop();
+	        mc.load(pageControl.musicObj);
+		}
+	}
+}
 
 function musicControl () {
 	var pre = $("#pre");
 	var next = $("#next");
 	var coreControl = $("#coreControl");
 	var music = $("#music");
+	addEvent(next, 'click', function () {
+		preNext(0);
+	});
 	addEvent(pre, 'click', function () {
-		var x = pageControl.mod.flag;
-		var list = master.list[$("#mcList .placeHold").innerHTML];
+		preNext(1);
 	})
 	addEvent(coreControl, 'click', function () {
 		if (mc.paused) {
 			mc.play();
-			coreControl.className = "start";
+			coreControl.childNodes[1].className = "pause";
 		} else {
 			mc.stop();
-			coreControl.className = "pause";
+			coreControl.childNodes[1].className = "start";
 		}
 	});
 
 	addEvent(music, "mousewheel", function (e) {
+		console.log(e.delta);
 		if (e.delta < 0) {
 			if (pageControl.volume >= 0) {
 				pageControl.volume --;
 			}
 		} else {
 			pageControl.volume ++;
+			if (pageControl.volume == 11) {
+				pageControl.volume = 10;
+			}
 		}
+		mc.changeVolume(pageControl.volume);
 	});
 
+}
+
+function randomMusic (list) {
+	var random = Math.random() * list.length - 1;
+	random = parseInt(random);
+	pageControl.musicObj.url = list[random].src;
+	mc.stop();
+	mc.load(pageControl.musicObj);
 }
 
 var mc = new Music({
 	size: 16,
 	timeNow: $("#timeNow"),
+	onended: function () {
+		var list = master.list[$("#mcList .placeHold").innerHTML];
+		switch (pageControl.mod.flag) {
+			case 0: {
+	            var random = Math.random() * list.length - 1;
+	            random = parseInt(random);
+	            pageControl.order = random;
+	            pageControl.musicObj.url = list[random].src;
+	            mc.load(pageControl.musicObj);
+	            break;
+			}
+			case 1: {
+	            pageControl.musicObj.url = list[pageControl.order].src;
+				mc.load(pageControl.musicObj);
+				break;
+			}
+			default: {
+				pageControl.order ++;
+				pageControl.musicObj.url = list[pageControl.order].src;
+				mc.load(pageControl.musicObj);
+				break;
+			}
+		}
+	},
 	visual: function(){
 		//这里实现可视化的详细操作
 	}
@@ -300,17 +355,3 @@ mc.load({
 	path: '/api',
 	url: "http://m2.music.126.net/nJ45UVWz0VJfh_yrNVR6MQ==/3402988503925654.mp3"
 });
-
-
-
-
-
-//滚轮控制事件 -- 待兼容
-// $("#music").addEventListener("mousewheel", function (e) {
-// 	if (e.wheelDelta < 0) {
-// 		volume --;
-// 	} else {
-// 		volume ++;
-// 	}
-// 	changeVolume(volume);
-// })

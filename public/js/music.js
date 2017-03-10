@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-03-06 21:25:57
 * @Last Modified by:   10261
-* @Last Modified time: 2017-03-09 20:57:12
+* @Last Modified time: 2017-03-10 22:42:42
 */
 
 'use strict';
@@ -20,6 +20,8 @@ function Music(option) {
 	this.analyser = Music.ac.createAnalyser();
 
 	this.size = option.size;
+
+	this.onended = option.onended;
 
 	this.analyser.fftSize = this.size * 2;
 
@@ -51,6 +53,10 @@ Music.prototype.load = function (obj) {
 		responseType: "arraybuffer",
 		data: obj,
 		load: function (data) {
+			self.startTime = 0;
+			self.currentTime = 0;
+			self.duration = 0;
+			self.staticTime = 0;
 			self.decode(data);
 		}
 	});
@@ -67,6 +73,7 @@ Music.prototype.decode = function (arraybuffer) {
 		bufferSource.connect(self.analyser);
 		bufferSource[bufferSource.start ? "start" : "noteOn"](0);
 
+		self.paused = false;
 		self.startTime = new Date();
 		self.startTime = self.startTime.getTime();
 		self.source = bufferSource;
@@ -96,13 +103,16 @@ Music.prototype.play = function (num) {
 	this.startTime = this.startTime.getTime();
 	this.staticTime = this.currentTime;
 	this.paused = false;
+	this.source.onended = this.onended;
 }
 Music.prototype.stop = function () {
 	this.source[this.source.stop ? "stop" : "noteOff"]();
+	this.source.onended = undefined;
 	this.paused = true;
 }
 Music.prototype.changeVolume = function (num) {
 	this.gainNode.gain.value = num * num * 0.01;
+	console.log(this.gainNode.gain.value);
 }
 Music.prototype.visualize = function () {
 	var arr = new Uint8Array(this.analyser.frequencyBinCount);
