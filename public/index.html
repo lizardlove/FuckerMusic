@@ -47,12 +47,12 @@
         			<span>xxxx</span>
         		</li>
         	</ul>
+            <div class="back">
+                <img src="./img/goR.png">
+            </div>
         </div>
         <!-- <canvas id="visulBg"></canvas> -->
         <div id="music">
-            <!-- <div id="meng">
-                <div id="mengBox" class="mengMusicList"></div>
-            </div> -->
         	<div id="musicList" class="btnFuc icon">
                 <img src="./img/list.png">   
             </div>
@@ -112,60 +112,73 @@
         			<li class="settingList">
         				<div class="setHead">
         					<span>用户设置</span>
-        					<a id="modify">
-        						<i></i>
-        					</a>
+        					<div class="modify">
+                                <img src="./img/mod.png" />
+                            </div>
         				</div>
         				<div class="listDet">
         					<div id="userHead" class="twoBile">
         						<div class="introduce">头像:</div>
-        						<div id="userHeadBox">
-        							<img src="" alt="userHead">
-        						</div>
-        						<a href="javascript:;" class="file userMod">选择文件
-        						    <input id="headSet" type="file">
-        						</a>
+                                <div class="inputBox">
+                                    <div id="userHeadBox">
+                                        <img src="./img/love.png" alt="userHead">
+                                    </div>
+                                    <div id="headSet">
+                                        <input type="file">
+                                        <img src="./img/selH.png">
+                                    </div>
+                                </div>
         					</div>
         					<div id="userNickname" class="oneBile">
-        						<span class="introduce">昵称:</span>
-        						<div class="lastUserMod">xxx</div>
-        						<span class="inputBox userMod">
-        						    <input type="text" name="nickname" class="userMod" id="nameSet">
-        						    <label class="inputLabel userMod" for="nameSet"></label>
-        						</span>
-        					</div>
-        					<div id="userPrivacy" class="userMod twoBile">
-        						<div id="lastP">
-        							<span class="introduce">旧密码:</span>
-        							<span class="inputBox">
-        							    <input type="password" name="passwordLast"  id="passwordLast">
-        						        <label class="inputLabel" for="passwordLast"></label>
-        						    </span>
-        						</div>
-        						<div id="newP">
-        							<span class="introduce">新密码:</span>
-        							<span class="inputBox">
-        						        <input type="password" name="passwordNew" id="passwordNew">
-        						        <label class="inputLabel" for="passwordNew"></label>
-        						    </span>
+        						<div class="introduce">昵称:</div>
+        						<div class="inputBox">
+        						    <div class="forBox">
+                                        <input type="text" name="nickname" id="nameSet">
+                                        <label class="inputLabel" for="nameSet"></label>
+                                    </div>
         						</div>
         					</div>
-        					<div id="sercetCfm" class="userConfirm userMod">确定</div>
+        					<div id="lastP" class="oneBile">
+        						<div class="introduce">旧密码:</div>
+        						<div class="inputBox">
+                                    <div class="forBox">
+                                        <input type="password" name="passwordLast"  id="passwordLast">
+                                        <label class="inputLabel" for="passwordLast"></label>
+                                    </div>
+        						  </div>
+        					</div>
+        					<div id="newP" class="oneBile">
+        						<div class="introduce">新密码:</div>
+        						<div class="inputBox">
+                                    <div class="forBox">
+                                        <input type="password" name="passwordNew" id="passwordNew">
+                                        <label class="inputLabel" for="passwordNew"></label>
+                                    </div>
+        						  </div>
+        					</div>
+        					<div id="sercetCfm" class="userConfirm">确定</div>
         				</div>
         			</li>
         			<li class="settingList">
         				<div class="setHead">
         					<span>样式设置</span>
+                            <div class="modify">
+                                <img src="./img/mod.png" />
+                            </div>
         				</div>
         				<div class="listDet">
-        					<div id="fontShow">福</div>
+        					<div id="fontShow">爱</div>
         					<div id="fontSize" class="oneBile">
-        						<span class="introduce">大小:</span>
-        						<input type="range" name="fontSize" id="fontSizeDet">
+        						<div class="introduce">大小:</div>
+                                <div class="inputBox">
+                                    <input type="range" name="fontSize" id="fontSizeDet">
+                                </div>
         					</div>
         					<div id="fontColor" class="oneBile">
-        						<span class="introduce">颜色:</span>
-        						<input type="color" name="fontColor" id="fontColorDet">
+        						<div class="introduce">颜色:</div>
+                                <div class="inputCol">
+                                    <input type="color" name="fontColor" id="fontColorDet">
+                                </div>
         					</div>
         					<div id="fontFamily" class="dropBile">
         						<span class="mv">字体族</span>
@@ -190,13 +203,16 @@
         			</li>
         		</ul>
         	</div>
+            <div class="back">
+                <img src="./img/goL.png">
+            </div>
         </div>
         <div id="friendListBox">
             <div id="me">
                 <div id="mePic">
-                    <img src="">
+                    <img src="./img/iLove.png">
                 </div>
-                <div id="meNickname">Zxy</div>
+                <div id="meNick">Zxy</div>
             </div>
             <div id="friendChocie">
                 <label for="myIdol" class="fd">关注</label>

@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-02-23 17:22:24
 * @Last Modified by:   10261
-* @Last Modified time: 2017-04-16 15:18:05
+* @Last Modified time: 2017-04-16 22:42:34
 */
 
 'use strict';
@@ -192,26 +192,26 @@ function clearWidth () {
 	$("#friendListBox").style.width = "0";
 }
 
-function modifyAround (stateOne, stateTwo) {
-	$(".lastUserMod").style.display = stateOne;
-	var userMod = $$(".userMod");
-	userMod.forEach(function (l) {
-		l.style.display = stateTwo;
-	});
-}
+// function modifyAround (stateOne, stateTwo) {
+// 	$(".lastUserMod").style.display = stateOne;
+// 	var userMod = $$(".userMod");
+// 	userMod.forEach(function (l) {
+// 		l.style.display = stateTwo;
+// 	});
+// }
 
 function pageChange () {
 	
-	var modify = $("#modify");
-	addEvent(modify, function () {
-		if (pageControl.modifyFlag == 0) {
-			modifyAround("none", "inline-block");
-			pageControl.modifyFlag ++;
-		} else {
-			modifyAround("block", "none");
-			pageControl.modifyFlag = 0;
-		}
-	});
+	// var modify = $("#modify");
+	// addEvent(modify, 'click', function () {
+	// 	if (pageControl.modifyFlag == 0) {
+	// 		modifyAround("none", "block");
+	// 		pageControl.modifyFlag ++;
+	// 	} else {
+	// 		modifyAround("block", "none");
+	// 		pageControl.modifyFlag = 0;
+	// 	}
+	// });
 
 	calW("#musicList");
 	calW("#userSetting");
