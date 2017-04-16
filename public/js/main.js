@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-02-23 17:22:24
 * @Last Modified by:   10261
-* @Last Modified time: 2017-03-11 00:13:55
+* @Last Modified time: 2017-04-16 15:18:05
 */
 
 'use strict';
@@ -92,13 +92,15 @@ var pageControl = {
 	modifyFlag: 0,
 	volume: 0,
 	order: 0,
+	width: document.body.offsetWidth,
+	height: document.body.offsetHeight,
 	musicObj: {
 		path: '/api',
 		url: ''
 	},
 	mod: {
 		flag: 0,
-		det: ["随机播放", "单曲循环", "顺序播放", "列表循环"]
+		det: ['random.png', 'circle.png', 'sig.png']
 	}
 }
 
@@ -165,8 +167,16 @@ function moreSelect(dom, list) {
 function calW(dom) {
 	addEvent($(dom), 'click', function () {
 		if (pageControl.pageFlag == 0) {
-			$(dom + "Box").style.width = "350px";
-			$("#music").style.width = "calc(100% - 350px)";
+			var bigWidth, littleWidth;
+			if (pageControl.width < 800) {
+				littleWidth = "50%";
+				bigWidth = "50%";
+			} else {
+				littleWidth = "25%";
+				bigWidth = "75%";
+			}
+			$(dom + "Box").style.width = littleWidth;
+			$("#music").style.width = bigWidth;
 			pageControl.pageFlag ++;
 		} else if (pageControl.pageFlag == 1) {
 			clearWidth();
@@ -180,18 +190,6 @@ function clearWidth () {
 	$("#musicListBox").style.width = "0";
 	$("#userSettingBox").style.width = "0";
 	$("#friendListBox").style.width = "0";
-}
-
-function choiceMod () {
-	var choice = $("#choiceMod span");
-	choice.innerHTML = pageControl.mod.det[pageControl.mod.flag];
-	addEvent(choice, 'click', function () {
-		pageControl.mod.flag++;
-		if(pageControl.mod.flag == 4) {
-			pageControl.mod.flag = 0;
-		}
-		choice.innerHTML = pageControl.mod.det[pageControl.mod.flag];
-	})
 }
 
 function modifyAround (stateOne, stateTwo) {
@@ -242,13 +240,6 @@ function timeJump() {
 	});
 }
 
-function start() {
-    timeJump();
-    musicControl();
-    selectGroup();
-    pageChange();
-}
-start();
 function preNext (flag) {
 	var x = pageControl.mod.flag;
 	var list = master.list[$("#mcList .placeHold").innerHTML];
@@ -355,3 +346,43 @@ mc.load({
 	path: '/api',
 	url: "http://m2.music.126.net/nJ45UVWz0VJfh_yrNVR6MQ==/3402988503925654.mp3"
 });
+
+function choiceMod() {
+	var prev = $("#choiceMod .prev");
+	var next = $("#choiceMod .next");
+	function control(x, y, z) {
+		var core = $("#choiceMod .slideBox img");
+		switch (pageControl.mod.flag) {
+			case 0: {
+				pageControl.mod.flag = 2;
+				break;
+			}
+			case 1: {
+				pageControl.mod.flag = 0;
+				break;
+			}
+			case 2: {
+				pageControl.mod.flag = 1;
+				break;
+			}
+			default: break;
+		}
+		core.src = "./img/" + pageControl.mod.det[pageControl.mod.flag];
+	}
+	addEvent(prev, 'click', function () {
+		control(2, 0, 1);
+	});
+	addEvent(next, 'click', function () {
+		control(1, 2, 0);
+	})
+}
+
+
+function start() {
+    timeJump();
+    musicControl();
+    selectGroup();
+    pageChange();
+}
+start();
+

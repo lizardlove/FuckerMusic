@@ -1,0 +1,500 @@
+/*
+* @Author: 10261
+* @Date:   2017-02-23 17:23:11
+* @Last Modified by:   10261
+* @Last Modified time: 2017-04-15 23:09:05
+*/
+*{
+	margin: 0;
+	padding: 0;
+}
+ul,li {
+	margin: 0;
+	padding: 0;
+	list-style-type:none;
+	outline: none;
+}
+body {
+	width: 100%;
+	height: 100%;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	overflow: hidden;
+	bottom: 0;
+}
+input {
+	outline: none;
+}
+
+/*********************************************/
+
+/*歌曲列表*/
+
+/*********************************************/
+#musicListBox {
+	width: 0;
+	height: 100%;
+	position: relative;
+	float: left;
+	z-index: 1;
+	overflow: hidden;
+	color: black;
+	text-align: center;
+	float: left;
+	transition: width 1s;
+	background: linear-gradient(to bottom, #09e7ed, #f7e7f2);
+}
+
+/*用户信息*/
+#master {
+	width: 100%;
+	height: 108px;
+	margin-top: 15px;
+	vertical-align: middle;
+}
+#masterPic {
+	width: 100%;
+	height: 78px;
+	line-height: 78px;
+	position: relative;
+}
+#masterPic img {
+	width: 60px;
+	height: 60px;
+	border-radius: 50%;
+	vertical-align: middle;
+}
+#masterPic img:hover {
+	animation: roates 1s ease;
+}
+@keyframes roates {
+	from {
+		transform: rotateX(0deg);
+	} to {
+		transform: rotateX(360deg);
+	}
+}
+#masterName {
+	width: 100%;
+	line-height: 30px;
+	position: relative;
+}
+
+/*播放方式选择*/
+#choiceMod {
+	width: 60%;
+	position: relative;
+	margin: 0 auto;
+	height: auto;
+	border-radius: 3px;
+	display: flex;
+
+	.prev {
+		flex: 1;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		img {
+			width: 30%;
+		}
+	}
+	.slideBox {
+		flex: 1;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		img {
+			width: 50%;
+		}
+	}
+	.next {
+		flex: 1;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		img {
+			width: 30%;
+		}
+	}
+}
+
+/*歌单选择，下拉列表*/
+#musicClass {
+	width: 100%;
+	height: 36px;
+	position: absolute;
+	top: 160px;
+}
+#mcList {
+	position: absolute;
+	left: 15%;
+}
+#newList {
+	width: 9%;
+	position: absolute;
+	height: 100%;
+	left: 88%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	img {
+		width: 100%;
+	}
+}
+
+/*********************************************/
+
+/*自定义select*/
+
+/*********************************************/
+.dropList {
+	width: 70%;
+	height: 36px;
+	font-size: 18px;
+	line-height: 36px;
+	color: #fff;
+	vertical-align: middle;
+	text-align: center;
+	background: transparent;
+	overflow: hidden;
+	border: 1px solid #fff;
+	border-radius: 4px;
+	box-sizing: border-box;
+	z-index: 5;
+}
+.dropList:hover {
+	height: auto;
+	overflow: visible;
+	color: #81c2d6;
+	z-index: 8;
+	background: #fff;
+}
+.dropList:hover > .placeHold::after {
+	border-color: #81c2d6;
+	display: none;
+}
+.placeHold {
+	text-overflow: ellipsis;
+}
+.placeHold::after {
+	content: '';
+	width: 0;
+	height: 0;
+	border: 3px solid #fff;
+	border-radius: 50%;
+	position: absolute;
+	right: 10%;
+	top: 40%;
+}
+.options li{
+	width: 100%;
+	line-height: 36px;
+	vertical-align: middle;
+	z-index: 10;
+}
+.options li:hover {
+	background: #81c2d6;
+	color: #fff;
+}
+
+
+/*详细歌单*/
+#mcListDet {
+	position: absolute;
+	top: 210px;
+	left: 0;
+	right: 0;
+	bottom: 60px;
+	line-height: 36px;
+	vertical-align: middle;
+	overflow-y: hidden;
+	overflow-x: hidden;
+}
+
+/*********************************************/
+
+/*自定义滑条*/
+
+/*********************************************/
+::scrollbar {
+  width: 10px;
+}
+
+::scrollbar-track {
+  border-radius: 10px;
+  background-color: #185FF6;
+  border: 1px solid #fff;
+}
+
+::scrollbar-thumb {
+  border-radius: 10px;
+  background-color: #18C9F6;
+}
+li.sigMusic {
+	width: 100%;
+	height: 36px;
+}
+.sigMusic span {
+	width: 90%;
+	height: 36px;
+	border: 1px dashed #fff;
+	position: absolute;
+	left: 5%;
+	color: #fff;
+	background: #18a1f6;
+	text-overflow: ellipsis;
+}
+.sigMusic span:hover {
+	background: #18e3f6;
+}
+/*********************************************/
+
+/*FM主体*/
+
+/*********************************************/
+#music {
+	width: 100%;
+	height: 100%;
+	// min-width: 500px;
+	position: relative;
+	float: left;
+	text-align: center;
+	z-index: 1;
+	float: left;
+	transition: width 1s;
+}
+
+/*进度条*/
+#timeLine {
+	width: 100%;
+	height: 10px;
+	position: absolute;
+	top: 0;
+	left: 0;
+	text-align: left;
+	z-index: 101;
+}
+#timeNow {
+	width: 60%;
+	height: 100%;
+	border-radius: 5px;
+	background: linear-gradient(to right, #24f998 , #127eec); /* 标准的语法 */
+}
+
+/*音乐信息-图片-歌曲名-歌手*/
+#musicInfo {
+	position: relative;
+	z-index: 4;
+	margin-top: 15px;
+	width: 100%;
+	height: auto;
+	display: flex;
+	tranisition: margin-top 1s;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+
+	#musicPic {
+		order: 1;
+		max-width: 120px;
+		width: 30%;
+		height: auto;
+		border-radius: 50%;
+		overflow: hidden;
+		display: flex;
+		justify-content: center;
+	    align-items: center;
+
+	    img {
+	    	width: 100%;
+	    	&:hover {
+	    		animation: roates 1s ease;
+	    	}
+	    }
+	}
+
+	#iLove {
+		order: 4;
+		max-width: 40px;
+		width: 10%;
+		height: auto;
+		margin-top: 5px;
+		display: flex;
+		justify-content: center;
+	    align-items: center;
+
+	    img {
+	    	width: 100%;
+	    }
+	}
+	#musicName {
+		order: 2;
+		font-size: 0.5rem;
+	}
+
+	#musicAuthor {
+		order: 3;
+		font-size: 0.3rem;
+	}
+}
+
+
+/*歌词块*/
+#musicLrc {
+	position: relative;
+	height: auto;
+	overflow: hidden;
+	line-height: 0.8rem;
+	font-size: 0.4rem;
+	color: #c9cabb;
+
+	li:nth-child(3), li:nth-child(5) {
+		color: #34352c;
+	}
+
+	li:nth-child(4) {
+		line-height: 1rem;
+		font-size: 0.6rem;
+		color: #34352c;
+	}
+}
+
+/*弹幕输入框*/
+#ctrl {
+	position: absolute;
+	bottom: 0.5rem;
+	z-index: 5;
+	width: 100%;
+	height: auto;
+	@media (max-width: 798px) {
+		bottom: 2.5rem;
+	}
+}
+
+#danmuInput {
+	position: relative;
+	margin: 0 auto;
+	width: 40%;
+	height: 0.8rem;
+	@media (max-width: 798px) {
+		width: 80%;
+	}
+}
+#danmu {
+	width: 100%;
+	height: 100%;
+	position: relative;
+	margin: 0 auto;
+	border: none;
+	font-size: 0.4rem;
+	text-align: center;
+}
+#danmu:focus {
+	outline: none;
+}
+.danmuIpt {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	left: 0;
+	top: 0;
+}
+.danmuIpt::before,.danmuIpt::after {
+	content: '';
+	width: 50%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	border: 1.5px solid #83fcd8;
+	transition: transform 0.3s ease;
+}
+.danmuIpt::before {
+	left: 0;
+	border-right: none;
+}
+.danmuIpt::after {
+	left: 50%;
+	border-left: none;
+}
+#danmu:focus + .danmuIpt::before {
+	-webkit-transform: translateX(-10%);
+	transform: translateX(-10%);
+}
+#danmu:focus + .danmuIpt::after {
+	-webkit-transform: translateX(10%);
+	transform: translateX(10%);
+}
+
+
+
+/*音乐控制*/
+#musicControl {
+	position: relative;
+	width: 30%;
+	height: auto;
+	margin: 0 auto;
+	margin-top: 0.5rem;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	@media (max-width: 798px) {
+		width: 90%;
+	}
+
+	a {
+		flex: 1;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+
+		img {
+			width: 80%;
+		}
+	}
+}
+.icon:hover {
+	transform: scale(1.3);
+	transition: transform 0.2s;
+}
+
+
+/*功能按钮*/
+.btnFuc {
+	max-width: 30px;
+	max-height: 30px;
+	min-height: 20px;
+	min-width: 20px;
+	width: 10%;
+	z-index: 6;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	img {
+		width: 100%;
+	}
+}
+#musicList {/*歌曲列表*/
+	position: absolute;
+	left: 15px;
+	bottom: 15px;
+}
+
+#friendList {/*我的朋友*/
+	position: absolute;
+	right: 15px;
+	bottom: 15px;
+}
+#userSetting {/*用户*/
+	position: absolute;
+	right: 15px;
+	top: 20px;
+}
+#musicSearch {/*音乐搜索*/
+	position: absolute;
+	left: 15px;
+	top: 20px;
+}

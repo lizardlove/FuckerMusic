@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-03-06 13:52:05
 * @Last Modified by:   10261
-* @Last Modified time: 2017-03-06 15:55:32
+* @Last Modified time: 2017-04-16 12:06:38
 */
 #friendListBox {
 	width: 0;
@@ -90,10 +90,10 @@
 	transition: margin-left 1s;
 }
 #myFan:checked ~ #myBox ul {
-	margin-left: -350px;
+	margin-left: -100%;
 }
 #myIdol:checked ~ #myBox ul {
-	margin-left: 0px;
+	margin-left: 0;
 }
 .myFed {
 	width: 50%;

@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-02-23 17:23:49
 * @Last Modified by:   10261
-* @Last Modified time: 2017-03-06 16:36:32
+* @Last Modified time: 2017-04-16 11:33:09
 */
 /*********************************************/
 
@@ -69,10 +69,10 @@
 	display: none;
 }
 #secretRadio:checked ~ #setDet  #setBox {
-	margin-left: 0;W
+	margin-left: 0;
 }
 #styleRadio:checked ~ #setDet  #setBox {
-	margin-left: -315px;
+	margin-left: -100%;
 }
 .settingList{
 	width: 33.333333333%;

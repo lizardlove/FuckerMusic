@@ -2,12 +2,17 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
         <link rel="stylesheet" type="text/css" href="./css/mainHead.css">
         <link rel="stylesheet" type="text/css" href="./css/setting.css">
         <link rel="stylesheet" type="text/css" href="./css/friend.css">
         <script src="./js/ajax.js"></script>
+        <script src="js/moible.js"></script>
     </head>
     <body>
+        <div id="timeLine">
+            <div id="timeNow"></div>
+        </div>
         <div id="musicListBox">
         	<div id="master">
         		<div id="masterPic">
@@ -16,8 +21,16 @@
         		<div id="masterName">Zxy</div>
         	</div>
         	<div id="choiceMod">
-        		<span>随机播放</span>
-        	</div>
+                <div class="prev">
+                    <img src="img/prev.png">
+                </div>
+                <div class="slideBox">
+                     <img src="./img/random.png">
+                </div>
+                <div class="next">
+                    <img src="img/next.png">
+                </div>   
+            </div>
         	<div id="musicClass">
         	    <div id="mcList" class="dropList">
         	        <div class="placeHold">我喜欢</div>
@@ -25,7 +38,9 @@
         	        	<ul></ul>
         	        </div>
         	    </div>
-                <div id="newList"></div>
+                <div id="newList">
+                    <img src="./img/new.png">
+                </div>
         	</div>
         	<ul id="mcListDet">
         		<li class="sigMusic">
@@ -33,37 +48,41 @@
         		</li>
         	</ul>
         </div>
-        <canvas id="visulBg"></canvas>
+        <!-- <canvas id="visulBg"></canvas> -->
         <div id="music">
-        	<div id="musicList" class="btnFuc icon"></div>
-        	<div id="friendList" class="btnFuc icon"></div>
+            <!-- <div id="meng">
+                <div id="mengBox" class="mengMusicList"></div>
+            </div> -->
+        	<div id="musicList" class="btnFuc icon">
+                <img src="./img/list.png">   
+            </div>
+        	<div id="friendList" class="btnFuc icon">
+                <img src="./img/friend.png">   
+            </div>
         	<div id="userSetting" class="btnFuc icon">
-                <span class="setOne"></span>
-                <span class="setTwo"></span>  
+                <img src="./img/set.png">
             </div>
-        	<div id="musicSearch" class="btnFuc icon"></div>
-            <div id="timeLine">
-            	<div id="timeNow"></div>
+        	<div id="musicSearch" class="btnFuc icon">
+                <img src="./img/search.png">   
             </div>
-            <canvas id="danmuCanvas"></canvas>
             <div id="musicInfo">
                 <div id="musicPic">
-                	<img src="" alt="musicPic">
+                	<img src="./img/circle.png" alt="musicPic">
                 </div>
                 <div id="musicName">Fucker Music</div>
                 <div id="musicAuthor">Zxy</div>
-                <div id="iLove"></div>
+                <div id="iLove">
+                    <img src="./img/love.png">
+                </div>
             </div>
             <ul id="musicLrc">
-            	<li class="l">xxxx</li>
-            	<li class="l">xxxxxx</li>
-            	<li class="l">xxxx</li>
-            	<li class="r">xxxx</li>
-            	<li class="c">xxxx</li>
-            	<li class="c">xxxx</li>
-            	<li class="c">xxxx</li>
-            	<li class="c">xxxx</li>
-            	<li class="c">xxxx</li>
+            	<li>xxxx</li>
+                <li>xxxx</li>
+                <li>xxxx</li>
+                <li>xxxx</li>
+                <li>xxxx</li>
+                <li>xxxx</li>
+                <li>xxxx</li>
             </ul>
             <div id="ctrl">
                 <div id="danmuInput">
@@ -72,13 +91,13 @@
                 </div>
                 <div id="musicControl">  
                     <a id="pre" class="icon">
-                        <span></span>
+                        <img src="./img/mcPrev.png">
                     </a>
                     <a id="coreControl" class="icon">
-                        <span class="pause"></span>
+                        <img src="./img/play.png">
                     </a>
                     <a id="next" class="icon">
-                        <span></span>
+                        <img src="./img/mcNext.png">
                     </a>
                 </div>
             </div>
