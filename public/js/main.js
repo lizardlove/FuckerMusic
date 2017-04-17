@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-02-23 17:22:24
 * @Last Modified by:   10261
-* @Last Modified time: 2017-04-16 22:42:34
+* @Last Modified time: 2017-04-17 00:28:48
 */
 
 'use strict';
@@ -192,26 +192,15 @@ function clearWidth () {
 	$("#friendListBox").style.width = "0";
 }
 
-// function modifyAround (stateOne, stateTwo) {
-// 	$(".lastUserMod").style.display = stateOne;
-// 	var userMod = $$(".userMod");
-// 	userMod.forEach(function (l) {
-// 		l.style.display = stateTwo;
-// 	});
-// }
-
 function pageChange () {
-	
-	// var modify = $("#modify");
-	// addEvent(modify, 'click', function () {
-	// 	if (pageControl.modifyFlag == 0) {
-	// 		modifyAround("none", "block");
-	// 		pageControl.modifyFlag ++;
-	// 	} else {
-	// 		modifyAround("block", "none");
-	// 		pageControl.modifyFlag = 0;
-	// 	}
-	// });
+
+    var back = $$(".back");
+    back.forEach(function(b) {
+    	addEvent(b, 'click', function () {
+    		clearWidth();
+    		pageControl.pageFlag = 0;
+    	})
+    })
 
 	calW("#musicList");
 	calW("#userSetting");
@@ -268,7 +257,7 @@ function preNext (flag) {
 function musicControl () {
 	var pre = $("#pre");
 	var next = $("#next");
-	var coreControl = $("#coreControl");
+	var coreControl = $("#coreControl img");
 	var music = $("#music");
 	addEvent(next, 'click', function () {
 		preNext(0);
@@ -279,10 +268,10 @@ function musicControl () {
 	addEvent(coreControl, 'click', function () {
 		if (mc.paused) {
 			mc.play();
-			coreControl.childNodes[1].className = "pause";
+			coreControl.src = "./img/play.png";
 		} else {
 			mc.stop();
-			coreControl.childNodes[1].className = "start";
+			coreControl.src = "./img/pause.png";
 		}
 	});
 
@@ -300,7 +289,6 @@ function musicControl () {
 		}
 		mc.changeVolume(pageControl.volume);
 	});
-
 }
 
 function randomMusic (list) {
@@ -354,15 +342,15 @@ function choiceMod() {
 		var core = $("#choiceMod .slideBox img");
 		switch (pageControl.mod.flag) {
 			case 0: {
-				pageControl.mod.flag = 2;
+				pageControl.mod.flag = x;
 				break;
 			}
 			case 1: {
-				pageControl.mod.flag = 0;
+				pageControl.mod.flag = y;
 				break;
 			}
 			case 2: {
-				pageControl.mod.flag = 1;
+				pageControl.mod.flag = z;
 				break;
 			}
 			default: break;

@@ -21,6 +21,7 @@
 	width: 100%;
 	height: 1.5rem;
 	font-size: .4rem;
+	top: 15px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -33,7 +34,7 @@
 		justify-content: center;
 	    align-items: center;
 	    img {
-	    	width: 70%;
+	    	width: 60%;
 	    }
 	}
 	#meNick {
@@ -45,26 +46,30 @@
 }
 #friendChoice {
 	width: 100%;
-	height: calc(100% - 80px);
-	position: relative;
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 2rem;
+	bottom: 1.5rem;
+	overflow: hidden;
 }
 .fd {
 	width: 40%;
-	height: 40px;
-	position: relative;
-	margin-left: 4%;
-	margin-right: 4%;
-	font-size: 20px;
-	color: #333;
-	vertical-align: middle;
-	line-height: 40px;
+	line-height: 0.6rem;
+	line-height: 0.6rem;
+	font-size: 0.3rem;
 	display: inline-block;
+	vertical-align: middle;
+	text-align: center;
+	color: #999;
 	border: 1px solid #fff;
 	border-radius: 5px;
 }
 .fd:hover {
 	background: #fff;
 	color: #fa7e1c;
+	display: inline-block;
+	border-style: #fa7e1c;
 }
 .fd:active {
 	text-indent: 4px;
@@ -76,10 +81,11 @@
 	width: 100%;
 	position: absolute;
 	left: 0;
-	right: 50;
-	top: 130px;
-	bottom: 10px;
-	overflow: hidden;
+	right: 0;
+	top: 0.8rem;
+	bottom: 0;
+	overflow-x: hidden;
+	overflow-y: auto;
 }
 #myBox ul {
 	width: 200%;
@@ -99,51 +105,39 @@
 	height: 100%;
 	float: left;
 	overflow-x: hidden;
-	overflow-y: hidden;
-}
-::scrollbar {
-  width: 10px;
-  display: none;
-}
-
-::scrollbar-track {
-  border-radius: 10px;
-  background-color: #18C9F6;
-  border: 1px solid #fff;
-}
-
-::scrollbar-thumb {
-  border-radius: 10px;
-  background-color: #185FF6;
+	overflow-y: auto;
 }
 .friend {
 	width: 100%;
-	height: 60px;
+	height: 0.8rem;
 	border-top: 1px dashed #333;
 	border-bottom: 1px dashed #333;
 	position: relative;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	.friendPic {
+		flex: 2;
+		height: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		img {
+			width: 0.6rem;
+			height: 0.6rem;
+			border-radius: 50%;
+		}
+	}
+	.friendNick {
+		flex: 4;
+		height: 100%;
+		display: flex;
+		font-size: 0.25rem;
+		justify-content: center;
+		align-items: center;
+	}
 }
 .friend:hover {
 	background: #fff;
-}
-.friendPic {
-	width: 80px;
-	height: 60px;
-	float: left;
-}
-.friendPic img {
-	position: absolute;
-	top: 10px;
-	left: 20px;
-	border-radius: 50%;
-	width: 40px;
-	height: 40px;
-}
-.friendNickname {
-	width: calc(100% - 60px);
-	height: 60px;
-	line-height: 60px;
-	vertical-align: middle;
-	text-align: center;
-	font-size: 25px;
 }
