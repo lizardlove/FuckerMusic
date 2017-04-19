@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-03-06 21:25:57
 * @Last Modified by:   10261
-* @Last Modified time: 2017-03-10 22:42:42
+* @Last Modified time: 2017-04-18 23:30:05
 */
 
 'use strict';
@@ -14,6 +14,12 @@ function Music(option) {
 	this.count = 0;
 
 	this.paused = false;
+
+	this.info = {
+		img: option.img,
+		name: option.name,
+		author: option.author
+	};
 
 	this.timeNow = option.timeNow || null;
 
@@ -39,7 +45,7 @@ function Music(option) {
 
 	this.staticTime = 0;
 
-	//this.visual = option.visual;
+	this.visual = option.visual;
 
 	this.visualize();
 }
@@ -47,8 +53,11 @@ Music.ac = new (window.AudioContext||window.webkitAudioContext)();
 
 Music.prototype.load = function (obj) {
 	var self = this;
+	self.info.img.src = obj.pic;
+	self.info.name.innerHTML = obj.name;
+	self.info.author.innerHTML = obj.author;
 	ajax({
-		url: obj.path,
+		url: '/api',
 		method: "POST",
 		responseType: "arraybuffer",
 		data: obj,
@@ -120,7 +129,7 @@ Music.prototype.visualize = function () {
 
 	function v () {
 		self.analyser.getByteFrequencyData(arr);
-		//self.visual(arr);
+		self.visual(arr);
 		if (!self.paused) {
 			self.getCurrentTime();
 			if (self.timeNow !== null) {

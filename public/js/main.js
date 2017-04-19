@@ -2,11 +2,14 @@
 * @Author: 10261
 * @Date:   2017-02-23 17:22:24
 * @Last Modified by:   10261
-* @Last Modified time: 2017-04-17 00:28:48
+* @Last Modified time: 2017-04-19 17:19:26
 */
 
 'use strict';
-
+//全局基础
+//
+//
+//
 function $(dom) {
 	return document.querySelector(dom);
 };
@@ -44,6 +47,11 @@ requestAnimationFrame = window.requestAnimationFrame ||
                         window.webkitRequestAnimationFrame || 
                         window.mozRequestAnimationFrame;
 
+
+
+//页面配置
+//
+//
 var master = {//测试
 	name: "zxy", 
 	pic: "data:asdasdasdadad",
@@ -57,33 +65,32 @@ var master = {//测试
 	list: {
 		love: [{
 			name: 'a',
-			author: 'xxaas',
-			pic: 'xxdad',
+			author: 'aaa',
+			pic: './img/del.png',
 			src: 'http://m2.music.126.net/nJ45UVWz0VJfh_yrNVR6MQ==/3402988503925654.mp3',
 			lrc: 'xsddds',
 		},{
 			name: 'b',
-			author: 'xxaas',
-			pic: 'xxdad',
+			author: "sdsd",
+			pic: './img/del.png',
 			src: 'http://m2.music.126.net/h5sli9SrGADPLn-JSMyfIg==/3420580731402332.mp3',
 			lrc: 'xsddds',
 		},{
 			name: 'c',
 			author: 'xxaas',
-			pic: 'xxdad',
+			pic: './img/del.png',
 			src: 'http://m2.music.126.net/DMGuG62iX4w-aAmTnHzkcQ==/3250156389859817.mp3',
 			lrc: 'xsddds',
 		},{
 			name: 'd',
 			author: 'xxaas',
-			pic: 'xxdad',
+			pic: './img/del.png',
 			src: 'http://m2.music.126.net/eAT6BEj_mz1Y5W-APFXRsw==/3433774824121252.mp3',
 			lrc: 'xsddds',
 		}]
 	}
 }
 
-var _width = document.getElementsByTagName('html')[0].clientWidth;
 var musicVl = ["炫彩音阶", "梦幻气泡"];
 var fontFamily = ["微软雅黑", "苹果斜体"];
 
@@ -94,16 +101,31 @@ var pageControl = {
 	order: 0,
 	width: document.body.offsetWidth,
 	height: document.body.offsetHeight,
-	musicObj: {
-		path: '/api',
-		url: ''
-	},
+	musicObj: {},
 	mod: {
 		flag: 0,
-		det: ['random.png', 'circle.png', 'sig.png']
+		det: ['random.png', 'sig.png', 'circle.png']
 	}
 }
 
+//页面控制
+//
+//
+//
+//
+
+function moreSelect(dom, list) {
+	var placeHold = $(dom + " .placeHold");
+	for(var i = 0; i < list.length; i++) {
+		var newLi = document.createElement("li");
+		newLi.innerHTML = list[i];
+		placeHold.innerHTML = list[i];
+		addEvent(newLi, 'click', function () {
+			placeHold.innerHTML = this.innerHTML;
+		});
+		$(dom + " ul").appendChild(newLi);
+	}
+}
 function musicListSelect(dom, list) {
 	var placeHold = $(dom + " .placeHold");
 	for (var key in list) {
@@ -121,47 +143,11 @@ function musicListSelect(dom, list) {
 		})
 	});
 }
-
-function addList(dom) {
-	var placeHold = $(dom + " .placeHold");
-	if ($(dom +　"Det")) {
-	    var listDet = master.list[placeHold.innerHTML];
-	    $(dom + "Det").innerHTML = "";
-	    for (var i = 0; i < listDet.length; i ++) {
-		    var newLi = document.createElement("li");
-		    var newSpan = document.createElement("span");
-		    newLi.className = "sigMusic";
-		    addEvent(newLi, 'click', function () {
-		    	var list = master.list[$("#mcList .placeHold").innerHTML];
-		    	var self = this;
-		    	console.log(self.childNodes[0].innerHTML);
-		    	list.forEach(function (x) {
-		    		
-		    		if (self.childNodes[0].innerHTML == x.name) {
-		    			pageControl.musicObj.url = x.src;
-		    		}
-		    	})
-		    	mc.stop();
-		    	mc.load(pageControl.musicObj);
-		    })
-		    newSpan.innerHTML = listDet[i].name;
-		    newLi.appendChild(newSpan);
-		    $(dom + "Det").appendChild(newLi);
-	    }
-	}
-}
-
-function moreSelect(dom, list) {
-	var placeHold = $(dom + " .placeHold");
-	for(var i = 0; i < list.length; i++) {
-		var newLi = document.createElement("li");
-		newLi.innerHTML = list[i];
-		placeHold.innerHTML = list[i];
-		addEvent(newLi, 'click', function () {
-			placeHold.innerHTML = this.innerHTML;
-		});
-		$(dom + " ul").appendChild(newLi);
-	}
+function clearWidth () {
+	$("#music").style.width = "100%";
+	$("#musicListBox").style.width = "0";
+	$("#userSettingBox").style.width = "0";
+	$("#friendListBox").style.width = "0";
 }
 
 function calW(dom) {
@@ -185,12 +171,42 @@ function calW(dom) {
 	});
 }
 
-function clearWidth () {
-	$("#music").style.width = "100%";
-	$("#musicListBox").style.width = "0";
-	$("#userSettingBox").style.width = "0";
-	$("#friendListBox").style.width = "0";
+function choiceMod() {
+	var prev = $("#choiceMod .prev");
+	var next = $("#choiceMod .next");
+	function control(x, y, z) {
+		var core = $("#choiceMod .slideBox img");
+		switch (pageControl.mod.flag) {
+			case 0: {
+				pageControl.mod.flag = x;
+				break;
+			}
+			case 1: {
+				pageControl.mod.flag = y;
+				break;
+			}
+			case 2: {
+				pageControl.mod.flag = z;
+				break;
+			}
+			default: break;
+		}
+		core.src = "./img/" + pageControl.mod.det[pageControl.mod.flag];
+	}
+	addEvent(prev, 'click', function () {
+		control(2, 0, 1);
+	});
+	addEvent(next, 'click', function () {
+		control(1, 2, 0);
+	})
 }
+
+function selectGroup () {
+	musicListSelect("#mcList", master.list);
+	moreSelect("#musicVisualDet", musicVl);
+	moreSelect("#fontFamilyDet", fontFamily);
+}
+
 
 function pageChange () {
 
@@ -202,31 +218,109 @@ function pageChange () {
     	})
     })
 
-	calW("#musicList");
+	addEvent($("#musicSearch"), 'click', function () {
+		if (pageControl.pageFlag == 1) {
+			clearWidth();
+			pageControl.pageFlag = 0;
+		} else {
+			$("#searchBox").style.display = "block";
+			pageControl.pageFlag ++;
+		}
+	});
+
+	addEvent($(".close"), 'click', function () {
+		clearWidth();
+		pageControl.pageFlag = 0;
+		$("#searchBox").style.display = "none";
+	});
+
+	addEvent($("#iLove img"), 'click', function () {
+		var meL = $(".meList")
+		meL.innerHTML = '';
+		for (var key in master.list) {
+			var newLi = document.createElement("li");
+			newLi.innerHTML = key;
+			addEvent(newLi, 'click', function() {
+				master.list[this.innerHTML].push(pageControl.musicObj);
+				$(".meList").style.display = "none";
+				console.log(master.list[this.innerHTML]);
+			});
+			meL.appendChild(newLi);
+		}
+		meL.style.display = "block";
+	});
+
+    addEvent($("#newList"), "click", function () {
+    	$(".new").style.display = "block";
+    });
+
+    addEvent($(".confirmBox .no"), 'click', function () {
+    	$(".new").style.display = "none";
+    })
+
+    calW("#musicList");
 	calW("#userSetting");
 	calW("#friendList");
-
+	selectGroup();
 	choiceMod();
 
 }
 
-function selectGroup () {
-	musicListSelect("#mcList", master.list);
-	moreSelect("#musicVisualDet", musicVl);
-	moreSelect("#fontFamilyDet", fontFamily);
+
+//音乐控制
+
+
+function musicInit(dom) {
+	var list = master.list[$("#mcList .placeHold").innerHTML];
+	list.forEach(function (x) {
+		if (dom.childNodes[0].innerHTML == x.name) {
+			pageControl.musicObj = x;
+		}
+	});
+	mc.stop();
+	mc.load(pageControl.musicObj);
 }
+
+function addList(dom) {
+	var placeHold = $(dom + " .placeHold");
+	if ($(dom +　"Det")) {
+	    var listDet = master.list[placeHold.innerHTML];
+	    $(dom + "Det").innerHTML = "";
+	    for (var i = 0; i < listDet.length; i ++) {
+		    var newLi = document.createElement("li");
+		    var newSpan = document.createElement("span");
+		    newLi.className = "sigMusic";
+		    addEvent(newLi, 'click', function () {
+		    	var self = this;
+		    	musicInit(self);
+		    })
+		    newSpan.innerHTML = listDet[i].name;
+		    newLi.appendChild(newSpan);
+		    $(dom + "Det").appendChild(newLi);
+	    }
+	}
+}
+
 
 function timeJump() {
 	var timeLine = $("#timeLine");
 	addEvent(timeLine, 'click', function (e) {
 		if (mc.duration !== 0) {
 			mc.stop();
-			var time = (e.clientX / _width) * mc.duration;
+			var time = (e.clientX / pageControl.width) * mc.duration;
 		    mc.currentTime = time;
 		    mc.play(time);
 		    console.log(mc.currentTime / mc.duration);
 		}
 	});
+}
+
+function randomMusic (list) {
+	var random = Math.random() * list.length - 1;
+	random = parseInt(random);
+	pageControl.musicObj = list[random];
+	mc.stop();
+	mc.load(pageControl.musicObj);
 }
 
 function preNext (flag) {
@@ -259,6 +353,7 @@ function musicControl () {
 	var next = $("#next");
 	var coreControl = $("#coreControl img");
 	var music = $("#music");
+	timeJump();
 	addEvent(next, 'click', function () {
 		preNext(0);
 	});
@@ -291,17 +386,14 @@ function musicControl () {
 	});
 }
 
-function randomMusic (list) {
-	var random = Math.random() * list.length - 1;
-	random = parseInt(random);
-	pageControl.musicObj.url = list[random].src;
-	mc.stop();
-	mc.load(pageControl.musicObj);
-}
+
 
 var mc = new Music({
-	size: 16,
+	size: 32,
 	timeNow: $("#timeNow"),
+	img: $("#musicPic img"),
+	name: $("#musicName"),
+	author: $("#musicAuthor"),
 	onended: function () {
 		var list = master.list[$("#mcList .placeHold").innerHTML];
 		switch (pageControl.mod.flag) {
@@ -326,51 +418,20 @@ var mc = new Music({
 			}
 		}
 	},
-	visual: function(){
-		//这里实现可视化的详细操作
-	}
+	visual: vil
 });
-mc.load({
-	path: '/api',
-	url: "http://m2.music.126.net/nJ45UVWz0VJfh_yrNVR6MQ==/3402988503925654.mp3"
-});
-
-function choiceMod() {
-	var prev = $("#choiceMod .prev");
-	var next = $("#choiceMod .next");
-	function control(x, y, z) {
-		var core = $("#choiceMod .slideBox img");
-		switch (pageControl.mod.flag) {
-			case 0: {
-				pageControl.mod.flag = x;
-				break;
-			}
-			case 1: {
-				pageControl.mod.flag = y;
-				break;
-			}
-			case 2: {
-				pageControl.mod.flag = z;
-				break;
-			}
-			default: break;
-		}
-		core.src = "./img/" + pageControl.mod.det[pageControl.mod.flag];
-	}
-	addEvent(prev, 'click', function () {
-		control(2, 0, 1);
-	});
-	addEvent(next, 'click', function () {
-		control(1, 2, 0);
-	})
-}
+mc.load(master.list.love[2]);
 
 
-function start() {
-    timeJump();
+
+(function start() {
     musicControl();
-    selectGroup();
     pageChange();
-}
-start();
+})();
+
+
+//数据交互
+//
+//
+//
 
