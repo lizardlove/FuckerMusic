@@ -4,6 +4,8 @@
   "description": "FM",
   "main": "app.js",
   "dependencies": {
+    "big-integer": "^1.6.21",
+    "crypto": "0.0.3",
     "request": "^2.80.0"
   },
   "devDependencies": {},

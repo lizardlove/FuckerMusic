@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-02-23 17:22:24
 * @Last Modified by:   10261
-* @Last Modified time: 2017-04-19 17:19:26
+* @Last Modified time: 2017-04-20 14:48:37
 */
 
 'use strict';
@@ -52,44 +52,45 @@ requestAnimationFrame = window.requestAnimationFrame ||
 //页面配置
 //
 //
-var master = {//测试
-	name: "zxy", 
-	pic: "data:asdasdasdadad",
-	id: 1,
-	font: {
-		size: 20,
-		color: "#333",
-		family: "苹果斜体"
-	},
-	canvas: "炫彩音阶",
-	list: {
-		love: [{
-			name: 'a',
-			author: 'aaa',
-			pic: './img/del.png',
-			src: 'http://m2.music.126.net/nJ45UVWz0VJfh_yrNVR6MQ==/3402988503925654.mp3',
-			lrc: 'xsddds',
-		},{
-			name: 'b',
-			author: "sdsd",
-			pic: './img/del.png',
-			src: 'http://m2.music.126.net/h5sli9SrGADPLn-JSMyfIg==/3420580731402332.mp3',
-			lrc: 'xsddds',
-		},{
-			name: 'c',
-			author: 'xxaas',
-			pic: './img/del.png',
-			src: 'http://m2.music.126.net/DMGuG62iX4w-aAmTnHzkcQ==/3250156389859817.mp3',
-			lrc: 'xsddds',
-		},{
-			name: 'd',
-			author: 'xxaas',
-			pic: './img/del.png',
-			src: 'http://m2.music.126.net/eAT6BEj_mz1Y5W-APFXRsw==/3433774824121252.mp3',
-			lrc: 'xsddds',
-		}]
-	}
-}
+var master;
+// var master = {//测试
+// 	name: "zxy", 
+// 	pic: "data:asdasdasdadad",
+// 	id: 1,
+// 	font: {
+// 		size: 20,
+// 		color: "#333",
+// 		family: "苹果斜体"
+// 	},
+// 	canvas: "炫彩音阶",
+// 	list: {
+// 		love: [{
+// 			name: 'a',
+// 			author: 'aaa',
+// 			pic: './img/del.png',
+// 			src: 'http://m2.music.126.net/nJ45UVWz0VJfh_yrNVR6MQ==/3402988503925654.mp3',
+// 			lrc: 'xsddds',
+// 		},{
+// 			name: 'b',
+// 			author: "sdsd",
+// 			pic: './img/del.png',
+// 			src: 'http://m2.music.126.net/h5sli9SrGADPLn-JSMyfIg==/3420580731402332.mp3',
+// 			lrc: 'xsddds',
+// 		},{
+// 			name: 'c',
+// 			author: 'xxaas',
+// 			pic: './img/del.png',
+// 			src: 'http://m2.music.126.net/DMGuG62iX4w-aAmTnHzkcQ==/3250156389859817.mp3',
+// 			lrc: 'xsddds',
+// 		},{
+// 			name: 'd',
+// 			author: 'xxaas',
+// 			pic: './img/del.png',
+// 			src: 'http://m2.music.126.net/eAT6BEj_mz1Y5W-APFXRsw==/3433774824121252.mp3',
+// 			lrc: 'xsddds',
+// 		}]
+// 	}
+// }
 
 var musicVl = ["炫彩音阶", "梦幻气泡"];
 var fontFamily = ["微软雅黑", "苹果斜体"];
@@ -202,7 +203,6 @@ function choiceMod() {
 }
 
 function selectGroup () {
-	musicListSelect("#mcList", master.list);
 	moreSelect("#musicVisualDet", musicVl);
 	moreSelect("#fontFamilyDet", fontFamily);
 }
@@ -395,43 +395,38 @@ var mc = new Music({
 	name: $("#musicName"),
 	author: $("#musicAuthor"),
 	onended: function () {
-		var list = master.list[$("#mcList .placeHold").innerHTML];
-		switch (pageControl.mod.flag) {
-			case 0: {
-	            var random = Math.random() * list.length - 1;
-	            random = parseInt(random);
-	            pageControl.order = random;
-	            pageControl.musicObj.url = list[random].src;
-	            mc.load(pageControl.musicObj);
-	            break;
-			}
-			case 1: {
-	            pageControl.musicObj.url = list[pageControl.order].src;
-				mc.load(pageControl.musicObj);
-				break;
-			}
-			default: {
-				pageControl.order ++;
-				pageControl.musicObj.url = list[pageControl.order].src;
-				mc.load(pageControl.musicObj);
-				break;
-			}
-		}
+		$("#next").click();
 	},
 	visual: vil
 });
-mc.load(master.list.love[2]);
+ajax({
+	method: "GET",
+	url: "/user",
+	async: true,
+	success: function (data) {
+		data = JSON.parse(data);
+		pageInit(data);
+	},
+	error: function (data) {
+		console.log(data);
+	}
+});
 
-
-
-(function start() {
+function start() {
     musicControl();
     pageChange();
-})();
+    mc.load(master);
+}
+start();
 
-
-//数据交互
-//
-//
-//
+function pageInit(m) {
+	master = m;
+	console.log(master);
+	$("#masterPic img").src = m.pic;
+	$("#userHeadBox img").src = m.pic;
+	$("#nameSet").placeholder = m.name;
+	$("#masterName").innerHTML = m.name;
+	musicListSelect("#mcList", m.list);
+	mc.load(master.list.love[22]);
+}
 

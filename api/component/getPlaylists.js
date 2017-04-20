@@ -1,32 +1,64 @@
-'use strict';
+/*
+* @Author: 10261
+* @Date:   2017-04-12 10:35:53
+* @Last Modified by:   10261
+* @Last Modified time: 2017-04-20 13:36:41
+*/
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
+'use strict';
+const { createWebAPIRequest } = require("../util/util");
+const http = require('http');
 exports.getPlaylists = undefined;
 
-var _request = require('request');
-
-var _request2 = _interopRequireDefault(_request);
-
-var _config = require('../config');
-
-var _util = require('../util');
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var getPlaylists = function getPlaylists(id, callback) {
-  var option = (0, _util.deepCopy)(_config.globalOption);
-  var url = _config.origin + '/api/playlist/detail?id=' + id;
-  var method = 'get';
-  Object.assign(option, { url: url, method: method });
-  (0, _request2.default)(option, function (err, res, body) {
-    if (!err && res.statusCode == 200) {
-      var info = JSON.parse(body);
-      callback && callback(JSON.stringify(info, '', 2));
-    } else {
-      console.error(err);
+var getPlaylists = function getPlaylists (id, callback) {
+	const cookie = '';
+    let detail, imgurl;
+    const data = {
+        "id": id,
+        "offset": 0,
+        "total": true,
+        "limit": 1000,
+        "n": 1000,
+        "csrf_token": ""
+    };
+    createWebAPIRequest(
+    	'music.163.com',
+    	'/weapi/v3/playlist/detail',
+    	'POST',
+    	data,
+    	cookie,
+    	music_req => {
+    		detail = music_req;
+    		mergeRes();
+    	},
+    	err => {
+    		return "fetch error";
+    	}
+    );
+    const http_client = http.get({
+    	hostname: 'music.163.com',
+    	path:  '/playlist?id=' + id,
+    	headers: {
+    		'Referer': 'http://music.163.com',
+    	},
+    }, function (res) {
+    	res.setEncoding('utf8');
+    	let html = '';
+    	res.on('data', function (chunk) {
+    		html += chunk;
+    	});
+    	res.on('end', function () {
+    		const regImgCover = /\<img src=\"(.*)\" class="j-img"/ig;
+    		imgurl = regImgCover.exec(html)[1];
+    		mergeRes();
+    	})
+    })
+    function mergeRes() {
+    	if (imgurl != undefined && detail != undefined) {
+    		detail = JSON.parse(detail);
+    		detail.playlist.picUrl = imgurl;
+    		callback && callback(JSON.stringify(detail, '', 2));
+    	}
     }
-  });
-};
+}
 exports.getPlaylists = getPlaylists;

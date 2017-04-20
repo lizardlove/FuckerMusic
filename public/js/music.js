@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-03-06 21:25:57
 * @Last Modified by:   10261
-* @Last Modified time: 2017-04-18 23:30:05
+* @Last Modified time: 2017-04-20 14:36:33
 */
 
 'use strict';
@@ -57,9 +57,10 @@ Music.prototype.load = function (obj) {
 	self.info.name.innerHTML = obj.name;
 	self.info.author.innerHTML = obj.author;
 	ajax({
-		url: '/api',
+		url: "/music",
 		method: "POST",
 		responseType: "arraybuffer",
+		async: true,
 		data: obj,
 		load: function (data) {
 			self.startTime = 0;

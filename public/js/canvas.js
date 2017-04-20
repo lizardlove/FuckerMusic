@@ -2,14 +2,15 @@
 * @Author: 10261
 * @Date:   2017-04-18 23:44:08
 * @Last Modified by:   10261
-* @Last Modified time: 2017-04-19 17:20:59
+* @Last Modified time: 2017-04-19 18:35:58
 */
 
 'use strict';
 var canvasBox = document.querySelector("#bgC");
-var WIDTH = canvasBox.clientHeight;
-var HEIGHT = canvasBox.clientWidth;
+var WIDTH = document.querySelector("#music").offsetWidth;
+var HEIGHT = document.querySelector("#music").offsetHeight;
 console.log(WIDTH);
+console.log(HEIGHT);
 var canvas = document.createElement("canvas");
 var ctx = canvas.getContext("2d");
 var ARR = [];
