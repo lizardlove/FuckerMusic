@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-02-23 16:37:22
 * @Last Modified by:   10261
-* @Last Modified time: 2017-04-20 14:21:39
+* @Last Modified time: 2017-04-21 17:44:29
 */
 
 'use strict';
@@ -27,38 +27,57 @@ var user = {
 	canvas: "炫彩音阶",
 	list:{}
 }
+app.use("/api/search", function (req, res) {
+	console.log(req.body);
+	function get(x) {
+		return new Promise(function (resolve, reject) {
+			api.search(x, function (data) {
+				data = JSON.parse(data).result.songs;
+				var list = [];
+				for (let i = 0; i < data.length; i++) {
+			        var o = new Object();
+			        o.name = data[i].name;
+			        o.id = data[i].id;
+			        o.pic = data[i].album.picUrl;
+			        o.author = data[i].artists[0].name;
+			        list.push(o);
+		        }
+		        resolve(list);
+			});
+		});
+	}
+	get(req.body).then(function (data) {
+		res.end(JSON.stringify(data));
+	});
+});
 app.get("/user", function (req, res) {
-	api.getPlaylists("391527618", data => {
-		data = JSON.parse(data).playlist.tracks;
-		var list = [];
-		for (let i = 0; i < data.length; i++) {
-			var o = new Object();
-			o.name = data[i].name;
-			o.author = data[i].ar[0].name;
-			o.pic = data[i].al.picUrl;
-			o.id = data[i].id;
-			list.push(o);
-		}
-		user.list.love = list;
+	function get(x) {
+		return new Promise(function (resolve, reject) {
+			api.getPlaylists(x, function (data) {
+				data = JSON.parse(data).playlist.tracks;
+				var list = [];
+				for (let i = 0; i < data.length; i++) {
+					var o = new Object();
+					o.name = data[i].name;
+					o.author = data[i].ar[0].name;
+					o.pic = data[i].al.picUrl;
+					o.id = data[i].id;
+					list.push(o);
+				}
+				resolve(list);
+			});
+		});
+	}
+	get("391527618").then(function (data) {
+		user.list.love = data;
+		get("11039078").then(function (data) {
+			user.list.you = data;
+			res.end(JSON.stringify(user));
+		});
 	});
-	api.getPlaylists("11039078", data => {
-		data = JSON.parse(data).playlist.tracks;
-		var list = [];
-		for (let i = 0; i < data.length; i++) {
-			var o = new Object();
-			o.name = data[i].name;
-			o.author = data[i].ar[0].name;
-			o.pic = data[i].al.picUrl;
-			o.id = data[i].id;
-			list.push(o);
-		}
-		user.list.you = list;
-	});
-	res.end(JSON.stringify(user));
 });
 
 app.post("/music", function(req,res) {//可视化调试
-	console.log(req.body);
 	api.parseUrl(req.body.id, data => {
 		console.log(JSON.parse(data).data[0].url);
 		request(JSON.parse(data).data[0].url).pipe(res);

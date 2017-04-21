@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-03-06 21:25:57
 * @Last Modified by:   10261
-* @Last Modified time: 2017-04-20 14:36:33
+* @Last Modified time: 2017-04-21 17:43:26
 */
 
 'use strict';
@@ -47,6 +47,8 @@ function Music(option) {
 
 	this.visual = option.visual;
 
+	this.xhr = new window.XMLHttpRequest();
+
 	this.visualize();
 }
 Music.ac = new (window.AudioContext||window.webkitAudioContext)();
@@ -56,20 +58,25 @@ Music.prototype.load = function (obj) {
 	self.info.img.src = obj.pic;
 	self.info.name.innerHTML = obj.name;
 	self.info.author.innerHTML = obj.author;
-	ajax({
-		url: "/music",
-		method: "POST",
-		responseType: "arraybuffer",
-		async: true,
-		data: obj,
-		load: function (data) {
-			self.startTime = 0;
-			self.currentTime = 0;
-			self.duration = 0;
-			self.staticTime = 0;
-			self.decode(data);
+	if (typeof obj === 'object') {
+		var str = '';
+		for (var key in obj) {
+			str += key + '=' + obj[key] + '&';
 		}
-	});
+		obj = str.substring(0, str.length - 1);
+	}
+	self.xhr.abort();
+	self.xhr.responseType = "arraybuffer";
+	self.xhr.open("POST", "/music", true);
+	self.xhr.onload = function () {
+		self.startTime = 0;
+		self.currentTime = 0;
+		self.duration = 0;
+		self.staticTime = 0;
+		self.decode(self.xhr.response);
+	}
+	self.xhr.setRequestHeader("Content-type", 'application/x-www-form-urlencoded');
+	self.xhr.send(obj);
 }
 
 Music.prototype.decode = function (arraybuffer) {

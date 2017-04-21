@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-02-23 17:22:24
 * @Last Modified by:   10261
-* @Last Modified time: 2017-04-20 14:48:37
+* @Last Modified time: 2017-04-21 00:17:19
 */
 
 'use strict';
@@ -114,6 +114,17 @@ var pageControl = {
 //
 //
 //
+
+function pageInit(m) {
+	master = m;
+	console.log(master);
+	$("#masterPic img").src = m.pic;
+	$("#userHeadBox img").src = m.pic;
+	$("#nameSet").placeholder = m.name;
+	$("#masterName").innerHTML = m.name;
+	musicListSelect("#mcList", m.list);
+	mc.load(master.list.love[22]);
+}
 
 function moreSelect(dom, list) {
 	var placeHold = $(dom + " .placeHold");
@@ -285,6 +296,8 @@ function addList(dom) {
 	var placeHold = $(dom + " .placeHold");
 	if ($(dom +　"Det")) {
 	    var listDet = master.list[placeHold.innerHTML];
+	    console.log(master);
+	    console.log(listDet);
 	    $(dom + "Det").innerHTML = "";
 	    for (var i = 0; i < listDet.length; i ++) {
 		    var newLi = document.createElement("li");
@@ -411,22 +424,62 @@ ajax({
 		console.log(data);
 	}
 });
-
 function start() {
     musicControl();
     pageChange();
-    mc.load(master);
+    searchGroup();
 }
 start();
 
-function pageInit(m) {
-	master = m;
-	console.log(master);
-	$("#masterPic img").src = m.pic;
-	$("#userHeadBox img").src = m.pic;
-	$("#nameSet").placeholder = m.name;
-	$("#masterName").innerHTML = m.name;
-	musicListSelect("#mcList", m.list);
-	mc.load(master.list.love[22]);
+function searchGroup() {
+	var searchIpt = $("input[name=search]");
+	var go = $("#go");
+	addEvent(searchIpt, "keydown", function (e) {
+		if (e.keyCode == 13) {
+			search(searchIpt.value);
+		}
+	});
+	addEvent(go, 'click', function() {
+		search(searchIpt.value);
+	})
+}
+
+function createDiv(str) {
+	var dom = document.createElement("div");
+	dom.className = str;
+	return dom;
+}
+function search(keys) {
+	ajax({
+		url: "/api/search",
+		data: {key: keys},
+		method: "POST",
+		success: function (data) {
+			console.log(data);
+			data = JSON.parse(data);
+			var result = $("#result");
+			for (var i = 0; i < data.length; i++) {
+				var see = createDiv("see");
+				var sPic = createDiv("sPic");
+				var info = createDiv("info");
+				var infoName = createDiv("infoName");
+				var infoAuthor = createDiv("infoAuthor");
+				var ig = document.createElement("img");
+				ig.src = data[i].pic;
+				see.dataValue = data[i].id;
+				infoName.innerHTML = data[i].name;
+				infoAuthor.innerHTML = data[i].author;
+				info.appendChild(infoName);
+				info.appendChild(infoAuthor);
+				sPic.appendChild(ig);
+				see.appendChild(sPic);
+				see.appendChild(info);
+				result.append(see);
+			}
+		},
+		error: function (err) {
+			console.log(err);
+		}
+	})
 }
 
