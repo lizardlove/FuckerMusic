@@ -1,8 +1,8 @@
 /*
 * @Author: 10261
 * @Date:   2017-04-18 23:44:08
-* @Last Modified by:   10261
-* @Last Modified time: 2017-04-22 10:33:02
+* @Last Modified by:   LizardLove
+* @Last Modified time: 2017-04-22 17:48:55
 */
 
 'use strict';
@@ -15,7 +15,7 @@ var RADIUS = X > Y ? Y : X;
 var SIZE = 32;
 console.log(WIDTH);
 console.log(HEIGHT);
-var deg = 0.1;
+var deg = 0.5;
 var canvas = document.createElement("canvas");
 var ctx = canvas.getContext("2d");
 var Gradient = {};
@@ -48,11 +48,14 @@ CanvasRenderingContext2D.prototype.sector = function (x, y, r, sA, eA) {
 	this.restore();
 	return this;
 }
-CanvasRenderingContext2D.prototype.record = function(img, x, y, r) {
+CanvasRenderingContext2D.prototype.record = function(img, A, x, y, r) {
 	this.save();
 	this.translate(x, y);
-	this.drawImage(img, 0, 0, 200, 200);
-	//this.rotate(deg);
+	this.rotate(deg * (Math.PI / 180));
+	this.arc(0, 0, r, 0, Math.PI * 2);
+	this.stroke();
+	this.clip();
+	this.drawImage(img, -100, -100, 200, 200);
 	this.restore();
 	return this;
 }
@@ -78,5 +81,5 @@ function ball(arrs) {
 		ctx.sector(X, Y, h + 100, s * i, s * (i + 1)).fill();
 	}
 	ctx.record(image, 30, X, Y, 100);
-	deg += 0.1;
+	deg += 0.5;
 }

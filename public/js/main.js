@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-02-23 17:22:24
 * @Last Modified by:   10261
-* @Last Modified time: 2017-04-21 23:40:52
+* @Last Modified time: 2017-04-22 20:12:18
 */
 
 'use strict';
@@ -53,6 +53,7 @@ requestAnimationFrame = window.requestAnimationFrame ||
 //
 //
 var master;
+var searchBox;
 // var master = {//测试
 // 	name: "zxy", 
 // 	pic: "data:asdasdasdadad",
@@ -117,13 +118,12 @@ var pageControl = {
 
 function pageInit(m) {
 	master = m;
-	console.log(master);
 	$("#masterPic img").src = m.pic;
 	$("#userHeadBox img").src = m.pic;
 	$("#nameSet").placeholder = m.name;
 	$("#masterName").innerHTML = m.name;
 	musicListSelect("#mcList", m.list);
-	mc.load(master.list.love[5]);
+	//mc.load(master.list.love[5]);
 }
 
 function moreSelect(dom, list) {
@@ -144,16 +144,12 @@ function musicListSelect(dom, list) {
 		var newLi = document.createElement('li');
 		placeHold.innerHTML = key;
 		newLi.innerHTML = key;
-		$(dom + " ul").appendChild(newLi);
-	}
-	addList(dom);
-	var lis = $$(dom + " li");
-	lis.forEach(function (li) {
-		addEvent(li, 'click', function() {
+		addEvent(newLi, 'click', function () {
 			placeHold.innerHTML = this.innerHTML;
 			addList(dom);
 		})
-	});
+		$(dom + " ul").appendChild(newLi);
+	}
 }
 function clearWidth () {
 	$("#music").style.width = "100%";
@@ -246,7 +242,8 @@ function pageChange () {
 	});
 
 	addEvent($("#iLove img"), 'click', function () {
-		var meL = $(".meList")
+		var meL = $(".meList");
+		this.src = "./img/iLove.png";
 		meL.innerHTML = '';
 		for (var key in master.list) {
 			var newLi = document.createElement("li");
@@ -254,7 +251,7 @@ function pageChange () {
 			addEvent(newLi, 'click', function() {
 				master.list[this.innerHTML].push(pageControl.musicObj);
 				$(".meList").style.display = "none";
-				console.log(master.list[this.innerHTML]);
+				addList("#mcList");
 			});
 			meL.appendChild(newLi);
 		}
@@ -269,6 +266,14 @@ function pageChange () {
     	$(".new").style.display = "none";
     })
 
+    addEvent($(".confirmBox .yes"), 'click', function () {
+    	var list = $("input[name=newList]").value;
+    	master.list[list] = [];
+    	console.log(master);
+    	musicListSelect("#mcList", master.list);
+    	$(".new").style.display = "none";
+    })
+
     calW("#musicList");
 	calW("#userSetting");
 	calW("#friendList");
@@ -276,6 +281,74 @@ function pageChange () {
 	choiceMod();
 
 }
+
+
+//搜索
+function searchGroup() {
+	var searchIpt = $("input[name=search]");
+	var go = $("#go");
+	addEvent(searchIpt, "keydown", function (e) {
+		if (e.keyCode == 13) {
+			search(searchIpt.value);
+		}
+	});
+	addEvent(go, 'click', function() {
+		search(searchIpt.value);
+	})
+}
+
+function createDiv(str) {
+	var dom = document.createElement("div");
+	dom.className = str;
+	return dom;
+}
+function search(keys) {
+	ajax({
+		url: "/api/search",
+		data: {key: keys},
+		method: "POST",
+		success: function (data) {
+			data = JSON.parse(data);
+			var result = $("#result");
+			searchBox = data;
+			result.innerHTML = '';
+			for (var i = 0; i < data.length; i++) {
+				var see = createDiv("see");
+				var sPic = createDiv("sPic");
+				var info = createDiv("info");
+				var infoName = createDiv("infoName");
+				var infoAuthor = createDiv("infoAuthor");
+				var ig = document.createElement("img");
+				ig.src = data[i].pic;
+				see.dataValue = i;
+				infoName.innerHTML = data[i].name;
+				infoAuthor.innerHTML = data[i].author;
+				info.appendChild(infoName);
+				info.appendChild(infoAuthor);
+				sPic.appendChild(ig);
+				see.appendChild(sPic);
+				see.appendChild(info);
+				addEvent(see, 'click', function () {
+					pageControl.musicObj = searchBox[this.dataValue];
+					//mc.stop();
+					if (mc.source) {
+						mc.stop();
+					}
+					mc.load(pageControl.musicObj);
+				})
+				result.append(see);
+			}
+		},
+		error: function (err) {
+			console.log(err);
+		}
+	})
+}
+
+
+
+
+
 
 
 //音乐控制
@@ -296,8 +369,6 @@ function addList(dom) {
 	var placeHold = $(dom + " .placeHold");
 	if ($(dom +　"Det")) {
 	    var listDet = master.list[placeHold.innerHTML];
-	    console.log(master);
-	    console.log(listDet);
 	    $(dom + "Det").innerHTML = "";
 	    for (var i = 0; i < listDet.length; i ++) {
 		    var newLi = document.createElement("li");
@@ -418,6 +489,7 @@ ajax({
 	async: true,
 	success: function (data) {
 		data = JSON.parse(data);
+		console.log(data);
 		pageInit(data);
 	},
 	error: function (data) {
@@ -431,55 +503,4 @@ function start() {
 }
 start();
 
-function searchGroup() {
-	var searchIpt = $("input[name=search]");
-	var go = $("#go");
-	addEvent(searchIpt, "keydown", function (e) {
-		if (e.keyCode == 13) {
-			search(searchIpt.value);
-		}
-	});
-	addEvent(go, 'click', function() {
-		search(searchIpt.value);
-	})
-}
-
-function createDiv(str) {
-	var dom = document.createElement("div");
-	dom.className = str;
-	return dom;
-}
-function search(keys) {
-	ajax({
-		url: "/api/search",
-		data: {key: keys},
-		method: "POST",
-		success: function (data) {
-			console.log(data);
-			data = JSON.parse(data);
-			var result = $("#result");
-			for (var i = 0; i < data.length; i++) {
-				var see = createDiv("see");
-				var sPic = createDiv("sPic");
-				var info = createDiv("info");
-				var infoName = createDiv("infoName");
-				var infoAuthor = createDiv("infoAuthor");
-				var ig = document.createElement("img");
-				ig.src = data[i].pic;
-				see.dataValue = data[i].id;
-				infoName.innerHTML = data[i].name;
-				infoAuthor.innerHTML = data[i].author;
-				info.appendChild(infoName);
-				info.appendChild(infoAuthor);
-				sPic.appendChild(ig);
-				see.appendChild(sPic);
-				see.appendChild(info);
-				result.append(see);
-			}
-		},
-		error: function (err) {
-			console.log(err);
-		}
-	})
-}
 
