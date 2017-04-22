@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-02-23 17:22:24
 * @Last Modified by:   10261
-* @Last Modified time: 2017-04-21 00:17:19
+* @Last Modified time: 2017-04-21 23:40:52
 */
 
 'use strict';
@@ -123,7 +123,7 @@ function pageInit(m) {
 	$("#nameSet").placeholder = m.name;
 	$("#masterName").innerHTML = m.name;
 	musicListSelect("#mcList", m.list);
-	mc.load(master.list.love[22]);
+	mc.load(master.list.love[5]);
 }
 
 function moreSelect(dom, list) {
@@ -410,7 +410,7 @@ var mc = new Music({
 	onended: function () {
 		$("#next").click();
 	},
-	visual: vil
+	visual: ball
 });
 ajax({
 	method: "GET",

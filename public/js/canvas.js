@@ -2,51 +2,81 @@
 * @Author: 10261
 * @Date:   2017-04-18 23:44:08
 * @Last Modified by:   10261
-* @Last Modified time: 2017-04-19 18:35:58
+* @Last Modified time: 2017-04-22 10:33:02
 */
 
 'use strict';
 var canvasBox = document.querySelector("#bgC");
 var WIDTH = document.querySelector("#music").offsetWidth;
 var HEIGHT = document.querySelector("#music").offsetHeight;
+var X = WIDTH / 2;
+var Y = HEIGHT / 2;
+var RADIUS = X > Y ? Y : X; 
+var SIZE = 32;
 console.log(WIDTH);
 console.log(HEIGHT);
+var deg = 0.1;
 var canvas = document.createElement("canvas");
 var ctx = canvas.getContext("2d");
-var ARR = [];
-ARR.w = Math.round(WIDTH / 32) - 1;
-ARR.cgap = Math.round(ARR.w * 0.3);
-ARR.cw = ARR.w - ARR.cgap;
-ARR.linearGradient = ctx.createLinearGradient(0, HEIGHT, 0, 0);
-		ARR.linearGradient.addColorStop(0, 'green');
-		ARR.linearGradient.addColorStop(0.5, '#ff0');
-		ARR.linearGradient.addColorStop(1, '#f00');
-for (var o = 0; o < 32; o++) {
-	ARR.push({
-		cap: 0,
-		cheight: 10
-	});
-}
+var Gradient = {};
+Gradient.linearGradient = ctx.createLinearGradient(0, HEIGHT, 0, 0);
+Gradient.linearGradient.addColorStop(0, '#e6cbf1');
+Gradient.linearGradient.addColorStop(0.5, '#09e7ed');
+Gradient.linearGradient.addColorStop(1, '#2ecb5d');
+Gradient.radialGradient = ctx.createRadialGradient(X, Y, 0, X, Y, RADIUS);
+Gradient.radialGradient.addColorStop(0, '#e6cbf1');
+Gradient.radialGradient.addColorStop(0.5, '#09e7ed');
+Gradient.radialGradient.addColorStop(1, '#2ecb5d');
+
 canvas.width = WIDTH;
 canvas.height = HEIGHT;
 canvasBox.appendChild(canvas);
 
-function vil(arrs) {
+CanvasRenderingContext2D.prototype.sector = function (x, y, r, sA, eA) {
+	this.save();
+	this.translate(x, y);
+	this.beginPath();
+	this.arc(0, 0, r, sA, eA);
+	this.save();
+	this.rotate(eA);
+	this.moveTo(r, 0);
+	this.lineTo(0, 0);
+	this.restore();
+	this.rotate(sA);
+	this.lineTo(r, 0);
+	this.closePath();
+	this.restore();
+	return this;
+}
+CanvasRenderingContext2D.prototype.record = function(img, x, y, r) {
+	this.save();
+	this.translate(x, y);
+	this.drawImage(img, 0, 0, 200, 200);
+	//this.rotate(deg);
+	this.restore();
+	return this;
+}
+function Rect(arrs) {
 	ctx.clearRect(0, 0, WIDTH, HEIGHT);
-	ctx.fillStyle = ARR.linearGradient;
-	for (var i = 0; i < 32; i++) {
+	ctx.fillStyle = Gradient.linearGradient;
+	var w = Math.round(WIDTH / SIZE) - 1;
+	for (var i = 0; i < SIZE; i++) {
 		if (true) {
 			var h = arrs[i] / 280 * HEIGHT;
-			ARR[i].cheight > ARR.cw && (ARR[i].cheight = ARR.cw);
-			if(--ARR[i].cap < ARR[i].cheight) {
-				ARR[i].cap = ARR[i].cheight;
-			};
-			if (h > 0 && (ARR[i].cap < h + 40)) {
-				ARR[i].cap = h + 40 > HEIGHT ? HEIGHT : h + 40;
-			}
-			ctx.fillRect(ARR.w * i, HEIGHT - ARR[i].cap, ARR.cw, ARR[i].cheight);
-			ctx.fillRect(ARR.w * i, HEIGHT - h, ARR.cw, h);
+			ctx.fillRect(w * i, HEIGHT - h, w * 0.7, h);
 		}
 	}
-
+}
+function ball(arrs) {
+	ctx.clearRect(0, 0, WIDTH, HEIGHT);
+	ctx.fillStyle = Gradient.radialGradient;
+	var angle = Math.PI / 180;
+	var image = $("#musicPic img");
+	var s = (360 / SIZE) * angle;
+	for (var i = 0; i < SIZE; i++) {
+		var h = arrs[i] / 280 * (RADIUS * 0.8);
+		ctx.sector(X, Y, h + 100, s * i, s * (i + 1)).fill();
+	}
+	ctx.record(image, 30, X, Y, 100);
+	deg += 0.1;
 }
