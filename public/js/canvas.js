@@ -1,8 +1,8 @@
 /*
 * @Author: 10261
 * @Date:   2017-04-18 23:44:08
-* @Last Modified by:   LizardLove
-* @Last Modified time: 2017-04-22 17:48:55
+* @Last Modified by:   10261
+* @Last Modified time: 2017-04-25 23:12:53
 */
 
 'use strict';
@@ -16,8 +16,8 @@ var SIZE = 32;
 console.log(WIDTH);
 console.log(HEIGHT);
 var deg = 0.5;
-var canvas = document.createElement("canvas");
-var ctx = canvas.getContext("2d");
+var cva = document.createElement("canvas");
+var ctx = cva.getContext("2d");
 var Gradient = {};
 Gradient.linearGradient = ctx.createLinearGradient(0, HEIGHT, 0, 0);
 Gradient.linearGradient.addColorStop(0, '#e6cbf1');
@@ -28,9 +28,9 @@ Gradient.radialGradient.addColorStop(0, '#e6cbf1');
 Gradient.radialGradient.addColorStop(0.5, '#09e7ed');
 Gradient.radialGradient.addColorStop(1, '#2ecb5d');
 
-canvas.width = WIDTH;
-canvas.height = HEIGHT;
-canvasBox.appendChild(canvas);
+cva.width = WIDTH;
+cva.height = HEIGHT;
+canvasBox.appendChild(cva);
 
 CanvasRenderingContext2D.prototype.sector = function (x, y, r, sA, eA) {
 	this.save();
@@ -59,7 +59,27 @@ CanvasRenderingContext2D.prototype.record = function(img, A, x, y, r) {
 	this.restore();
 	return this;
 }
-function Rect(arrs) {
+
+function boom(arrs, mc) {
+	if (mc.source && arrs) {
+	    for (var i = 0; i < arrs.length; i++) {
+		    var x = parseInt(mc.currentTime - arrs[i].time);
+		    if (x > 0) {
+			    ctx.save();
+			    ctx.font = arrs[i].fontSize;
+			    ctx.fillStyle = arrs[i].fontColor;
+			    ctx.fillText(arrs[i].value, arrs[i].x, arrs[i].y);
+			    if (arrs[i].x <= -500) {
+				    arrs.splice(i, 1);
+			    }
+			    arrs[i].x -= (i + 1) * 0.6;
+			    ctx.restore();
+		    }
+	    }
+    }
+}
+
+function Rect(arrs, font, mc) {
 	ctx.clearRect(0, 0, WIDTH, HEIGHT);
 	ctx.fillStyle = Gradient.linearGradient;
 	var w = Math.round(WIDTH / SIZE) - 1;
@@ -70,11 +90,11 @@ function Rect(arrs) {
 		}
 	}
 }
-function ball(arrs) {
+function ball(arrs, font, mc) {
 	ctx.clearRect(0, 0, WIDTH, HEIGHT);
 	ctx.fillStyle = Gradient.radialGradient;
 	var angle = Math.PI / 180;
-	var image = $("#musicPic img");
+	var image = document.querySelector("#musicPic img");
 	var s = (360 / SIZE) * angle;
 	for (var i = 0; i < SIZE; i++) {
 		var h = arrs[i] / 280 * (RADIUS * 0.8);
@@ -82,4 +102,13 @@ function ball(arrs) {
 	}
 	ctx.record(image, 30, X, Y, 100);
 	deg += 0.5;
+}
+
+var canvas = {
+	ball: ball,
+	rect: Rect,
+	boom: boom,
+	clear: function () {
+		ctx.clearRect(0, 0, WIDTH, HEIGHT);
+	}
 }

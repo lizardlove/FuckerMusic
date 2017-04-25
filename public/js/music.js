@@ -2,10 +2,18 @@
 * @Author: 10261
 * @Date:   2017-03-06 21:25:57
 * @Last Modified by:   10261
-* @Last Modified time: 2017-04-21 17:43:26
+* @Last Modified time: 2017-04-25 22:58:28
 */
 
 'use strict';
+var fonts = [{
+	value: "重邮小傻逼",
+	fontSize: "50px sans-serif",
+	fontColor: "#000",
+	x: WIDTH,
+	time: 15,
+	y: Math.random() * HEIGHT - 1
+}]
 function Music(option) {
 	this.source = null;
 
@@ -18,8 +26,11 @@ function Music(option) {
 	this.info = {
 		img: option.img,
 		name: option.name,
-		author: option.author
+		author: option.author,
+		love: option.love
 	};
+
+	this.vilValue = option.vilValue;
 
 	this.timeNow = option.timeNow || null;
 
@@ -55,6 +66,21 @@ Music.ac = new (window.AudioContext||window.webkitAudioContext)();
 
 Music.prototype.load = function (obj) {
 	var self = this;
+	var list = master.list;
+	var x = false;
+	for (var key in list) {
+		var m = list[key];
+		for (var i = 0; i < m.length; i++) {
+			if (m[i].id === obj.id) {
+				x = true;
+			}
+		}
+	}
+	if (x) {
+		self.info.love.src = "./img/iLove.png";
+	} else {
+		self.info.love.src = "./img/love.png";
+	}
 	self.info.img.src = obj.pic;
 	self.info.name.innerHTML = obj.name;
 	self.info.author.innerHTML = obj.author;
@@ -128,7 +154,7 @@ Music.prototype.stop = function () {
 	this.paused = true;
 }
 Music.prototype.changeVolume = function (num) {
-	this.gainNode.gain.value = num * num * 0.01;
+	this.gainNode.gain.value = num * num * 0.25;
 	console.log(this.gainNode.gain.value);
 }
 Music.prototype.visualize = function () {
@@ -137,7 +163,16 @@ Music.prototype.visualize = function () {
 
 	function v () {
 		self.analyser.getByteFrequencyData(arr);
-		self.visual(arr);
+		self.visual.clear();
+		if (self.vilValue.dataValue == 1) {
+			self.visual.ball(arr);
+			self.visual.boom(fonts, self);
+		} else if(self.vilValue.dataValue == 2) {
+			self.visual.rect(arr);
+			self.visual.boom(fonts, self);
+		} else {
+			self.visual.boom(fonts, self);
+		}
 		if (!self.paused) {
 			self.getCurrentTime();
 			if (self.timeNow !== null) {
@@ -156,5 +191,3 @@ Music.prototype.getCurrentTime = function () {
 	var watch =(now - this.startTime) / 1000;
 	this.currentTime = this.staticTime + watch;
 }
-
-

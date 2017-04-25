@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-02-23 17:22:24
 * @Last Modified by:   10261
-* @Last Modified time: 2017-04-22 20:12:18
+* @Last Modified time: 2017-04-25 23:04:36
 */
 
 'use strict';
@@ -93,7 +93,6 @@ var searchBox;
 // 	}
 // }
 
-var musicVl = ["炫彩音阶", "梦幻气泡"];
 var fontFamily = ["微软雅黑", "苹果斜体"];
 
 var pageControl = {
@@ -209,21 +208,15 @@ function choiceMod() {
 	})
 }
 
-function selectGroup () {
-	moreSelect("#musicVisualDet", musicVl);
-	moreSelect("#fontFamilyDet", fontFamily);
-}
-
-
 function pageChange () {
 
     var back = $$(".back");
-    back.forEach(function(b) {
-    	addEvent(b, 'click', function () {
+    for (var b = 0; b < back.length; b++) {
+    	addEvent(back[b], 'click', function () {
     		clearWidth();
     		pageControl.pageFlag = 0;
     	})
-    })
+    }
 
 	addEvent($("#musicSearch"), 'click', function () {
 		if (pageControl.pageFlag == 1) {
@@ -277,7 +270,7 @@ function pageChange () {
     calW("#musicList");
 	calW("#userSetting");
 	calW("#friendList");
-	selectGroup();
+	moreSelect("#fontFamilyDet", fontFamily);
 	choiceMod();
 
 }
@@ -290,6 +283,7 @@ function searchGroup() {
 	addEvent(searchIpt, "keydown", function (e) {
 		if (e.keyCode == 13) {
 			search(searchIpt.value);
+			this.value = "";
 		}
 	});
 	addEvent(go, 'click', function() {
@@ -330,13 +324,12 @@ function search(keys) {
 				see.appendChild(info);
 				addEvent(see, 'click', function () {
 					pageControl.musicObj = searchBox[this.dataValue];
-					//mc.stop();
 					if (mc.source) {
 						mc.stop();
 					}
 					mc.load(pageControl.musicObj);
 				})
-				result.append(see);
+				result.appendChild(see);
 			}
 		},
 		error: function (err) {
@@ -356,11 +349,16 @@ function search(keys) {
 
 function musicInit(dom) {
 	var list = master.list[$("#mcList .placeHold").innerHTML];
-	list.forEach(function (x) {
-		if (dom.childNodes[0].innerHTML == x.name) {
-			pageControl.musicObj = x;
+	// list.forEach(function (x) {
+	// 	if (dom.childNodes[0].innerHTML == x.name) {
+	// 		pageControl.musicObj = x;
+	// 	}
+	// });
+	for (var x = 0; x　< list.length; x++) {
+		if(list[x] == dom.childNodes[0].innerHTML) {
+			pageControl.musicObj = list[x];
 		}
-	});
+	}
 	mc.stop();
 	mc.load(pageControl.musicObj);
 }
@@ -394,7 +392,7 @@ function timeJump() {
 			var time = (e.clientX / pageControl.width) * mc.duration;
 		    mc.currentTime = time;
 		    mc.play(time);
-		    console.log(mc.currentTime / mc.duration);
+		    console.log(mc.currentTime);
 		}
 	});
 }
@@ -478,10 +476,12 @@ var mc = new Music({
 	img: $("#musicPic img"),
 	name: $("#musicName"),
 	author: $("#musicAuthor"),
+	love: $("#iLove img"),
+	vilValue: $("#selectVilu"),
 	onended: function () {
 		$("#next").click();
 	},
-	visual: ball
+	visual: canvas
 });
 ajax({
 	method: "GET",
@@ -499,8 +499,71 @@ ajax({
 function start() {
     musicControl();
     pageChange();
+    visualSel();
     searchGroup();
+    barrage();
 }
 start();
 
 
+function visualSel() {
+	var sel = $("#selectVilu");
+	sel.dataValue = 1;
+	addEvent(sel, 'click', function () {
+		this.dataValue++;
+		if (this.dataValue == 3) {
+			this.dataValue = 0;
+		}
+		var m = this.childNodes[1];
+		switch (this.dataValue) {
+			case 0: {
+				m.src = "./img/x.png";
+				break;
+			}
+			case 1: {
+				m.src = "./img/ball.png";
+				break;
+			}
+			case 2: {
+				m.src = "./img/rect.png";
+				break;
+			}
+			default: break;
+		}
+	})
+}
+
+//弹幕
+//
+//
+//
+//
+
+function barrage() {
+	var bagIpt = $('#danmu');
+	addEvent(bagIpt, 'keydown', function (e) {
+		if (e.keyCode == 13) {
+			var value = this.value;
+			var y = Math.random() * HEIGHT;
+			if (y < master.font.size) {
+				y += master.font.size;
+			} else if (y > (HEIGHT - master.font.size)) {
+				y -= master.font.size;
+			}
+			var font = {
+				value: value,
+				id: pageControl.musicObj.id,
+				time: mc.currentTime,
+				fontSize: master.font.size + "px " + master.font.family,
+				fontColor: master.font.color,
+				x: WIDTH,
+				y: y
+			};
+			fonts.push(font);
+			this.value = "";
+		}
+	})
+}
+window.onerror = function (message) {
+	alert(message);
+}

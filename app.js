@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-02-23 16:37:22
 * @Last Modified by:   10261
-* @Last Modified time: 2017-04-22 18:50:38
+* @Last Modified time: 2017-04-25 22:11:57
 */
 
 'use strict';
@@ -20,11 +20,13 @@ var user = {
 	pic: "./img/to.png",
 	id: 0,
 	font: {
-		size: 20,
+		size: 50,
 		color: "#333",
-		family: "pg"
+		family: "sans-serif"
 	},
-	list:{}
+	list:{
+		love:[]
+	}
 }
 app.use("/api/search", function (req, res) {
 	console.log(req.body);
@@ -52,31 +54,6 @@ app.use("/api/search", function (req, res) {
 app.get("/user", function (req, res) {
 	console.log("user");
 	res.end(JSON.stringify(user));
-	// function get(x) {
-	// 	return new Promise(function (resolve, reject) {
-	// 		api.userList(x, function (data) {
-	// 			// data = JSON.parse(data).playlist.tracks;
-	// 			// var list = [];
-	// 			// for (let i = 0; i < data.length; i++) {
-	// 			// 	var o = new Object();
-	// 			// 	o.name = data[i].name;
-	// 			// 	o.author = data[i].ar[0].name;
-	// 			// 	o.pic = data[i].al.picUrl;
-	// 			// 	o.id = data[i].id;
-	// 			// 	list.push(o);
-	// 			// }
-	// 			data = JSON.parse(data);
-	// 			resolve(data);
-	// 		});
-	// 	});
-	// }
-	// get("391527618").then(function (data) {
-	// 	user.list.love = data;
-		// get("13806370").then(function (data) {
-		// 	//user.list.you = data;
-		// 	res.end(JSON.stringify(data));
-		// });
-	// });
 });
 
 app.post("/music", function(req,res) {//可视化调试

@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-04-20 12:18:38
 * @Last Modified by:   10261
-* @Last Modified time: 2017-04-22 18:32:53
+* @Last Modified time: 2017-04-23 12:36:51
 */
 
 'use strict';
@@ -35,11 +35,11 @@ console.log('x');
 // api.login('13608379573', 'zxy951357', data => {
 // 	console.log("******************login************");
 // 	console.log(data);
-// })
-// api.lyric('347230', data => {
-// 	console.log("******************lyric************");
-// 	console.log(data);
-// })
+// });
+api.lyric('347230', data => {
+	console.log("******************lyric************");
+	console.log(data);
+})
 // api.parseUrl('347230', data => {
 // 	console.log("******************parseUrl************");
 // 	console.log(JSON.parse(data).data[0].url);
@@ -52,7 +52,7 @@ console.log('x');
 // 	console.log("******************top************");
 // 	console.log(data);
 // })
-api.userList("13806370", data => {
-	console.log("******************userList************");
-	console.log(data);
-})
+// api.userList("13806370", data => {
+// 	console.log("******************userList************");
+// 	console.log(data);
+// })
