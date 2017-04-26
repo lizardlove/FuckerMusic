@@ -2,28 +2,29 @@
 * @Author: 10261
 * @Date:   2017-03-06 21:25:57
 * @Last Modified by:   10261
-* @Last Modified time: 2017-04-26 18:15:07
+* @Last Modified time: 2017-04-26 18:23:56
 */
 
 'use strict';
-var fonts = [{
-	value: "重邮小傻逼",
-	fontSize: "50px sans-serif",
-	fontColor: "#000",
-	x: WIDTH,
-	time: 15,
-	y: Math.random() * HEIGHT - 1
-}]
+// var fonts = [{
+// 	value: "重邮小傻逼",
+// 	fontSize: "50px sans-serif",
+// 	fontColor: "#000",
+// 	x: WIDTH,
+// 	time: 15,
+// 	y: Math.random() * HEIGHT - 1
+// }]
+var fonts = [];
 function Music(option) {
 
 	//tag = 1，表示执行可视化，为0表示不执行可视化
 	this.tag = 1;
 
 	this.audio = new Audio();
-	var self = this;
-	self.audio.addEventListener("ended", function () {
+	this.audio.addEventListener("ended", function () {
 		option.onended();
 	});
+	this.audio.volume = 0.5;
 
 	this.info = {
 		img: option.img,
@@ -56,6 +57,7 @@ function Music(option) {
 	this.analyser.fftSize = this.size * 2;
 
 	this.gainNode = Music.ac[Music.ac.createGain ? "createGain" : "createGainNode"]();
+	this.gainNode.gain.value = 10;
 
 	this.gainNode.connect(Music.ac.destination);
 
@@ -229,7 +231,9 @@ Music.prototype.visualize = function () {
 			    self.visual.rect(arr);
 		    }
 	    }
-		//self.visual.boom(fonts, self);
+	    if (fonts) {
+	    	self.visual.boom(fonts, self);
+	    }
 		if (self.tag) {
 			if (!self.paused) self.getCurrentTime();
 		} else {
