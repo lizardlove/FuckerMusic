@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-02-23 16:37:22
 * @Last Modified by:   10261
-* @Last Modified time: 2017-04-25 22:11:57
+* @Last Modified time: 2017-04-26 11:17:03
 */
 
 'use strict';
@@ -56,11 +56,28 @@ app.get("/user", function (req, res) {
 	res.end(JSON.stringify(user));
 });
 
-app.post("/music", function(req,res) {//可视化调试
-	api.parseUrl(req.body.id, data => {
-		console.log(JSON.parse(data).data[0].url);
-		request(JSON.parse(data).data[0].url).pipe(res);
-	});
+app.post("/musicUrl", function(req,res) {//可视化调试
+	function get(x) {
+		return new Promise(function (resolve, reject) {
+			api.parseUrl(x, function (data) {
+				resolve(data);
+			});
+		});
+	}
+	get(req.body.id).then(function (data) {
+		console.log(req.body.parse);
+		if (req.body.parse == 1) {
+			request(JSON.parse(data).data[0].url).pipe(res);
+		} else {
+			data = JSON.parse(data);
+			data = JSON.stringify(data);
+			res.end(data);
+		}
+	})
+	// api.parseUrl(req.body.id, data => {
+	// 	console.log(JSON.parse(data).data[0].url);
+	// 	request(JSON.parse(data).data[0].url).pipe(res);
+	// });
 });
 http.createServer(app).listen(8000);
 console.log("run in 8000");

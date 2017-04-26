@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-03-06 21:25:57
 * @Last Modified by:   10261
-* @Last Modified time: 2017-04-25 22:58:28
+* @Last Modified time: 2017-04-26 18:15:07
 */
 
 'use strict';
@@ -15,13 +15,15 @@ var fonts = [{
 	y: Math.random() * HEIGHT - 1
 }]
 function Music(option) {
-	this.source = null;
 
-	this.buffer = [];
+	//tag = 1，表示执行可视化，为0表示不执行可视化
+	this.tag = 1;
 
-	this.count = 0;
-
-	this.paused = false;
+	this.audio = new Audio();
+	var self = this;
+	self.audio.addEventListener("ended", function () {
+		option.onended();
+	});
 
 	this.info = {
 		img: option.img,
@@ -30,11 +32,22 @@ function Music(option) {
 		love: option.love
 	};
 
+	//this.vilValue.dataValue表示可视化方案  0：不执行可视化 1 圆形  2 柱形
+	//不执行可视化时，采用Dom audio 模式
+	//执行可视化时，采用web audio api封装的模式
 	this.vilValue = option.vilValue;
 
 	this.timeNow = option.timeNow || null;
 
 	this.analyser = Music.ac.createAnalyser();
+
+	this.source = null;
+
+	this.buffer = [];
+
+	this.count = 0;
+
+	this.paused = false;
 
 	this.size = option.size;
 
@@ -68,6 +81,7 @@ Music.prototype.load = function (obj) {
 	var self = this;
 	var list = master.list;
 	var x = false;
+	obj.parse = 1;
 	for (var key in list) {
 		var m = list[key];
 		for (var i = 0; i < m.length; i++) {
@@ -84,6 +98,38 @@ Music.prototype.load = function (obj) {
 	self.info.img.src = obj.pic;
 	self.info.name.innerHTML = obj.name;
 	self.info.author.innerHTML = obj.author;
+
+	//以上为信息配置，下面为ajax配置
+	
+
+	self.xhr.abort();
+	self.xhr.open("POST", "/musicUrl", true);
+	if (self.vilValue.dataValue == 0) {
+		obj.parse = 0;
+		self.tag = 0;
+		self.xhr.responseType = "text";
+		self.xhr.onload = function () {
+			self.audio.src = JSON.parse(self.xhr.response).data[0].url;
+			self.startTime = 0;
+			self.staticTime = 0;
+			self.currentTime = 0;
+			self.duration = self.audio.duration;
+			console.log(self.audio.duration);
+			console.log(self.audio.currentTime);
+			self.audio.play();
+		}
+	} else {
+		self.tag = 1;
+		self.xhr.responseType = "arraybuffer";
+		self.xhr.onload = function () {
+			self.startTime = 0;
+			self.staticTime = 0;
+			self.currentTime = 0;
+			self.duration = 0;
+			self.decode(self.xhr.response);
+		}
+	}
+	self.xhr.setRequestHeader("Content-type", 'application/x-www-form-urlencoded');
 	if (typeof obj === 'object') {
 		var str = '';
 		for (var key in obj) {
@@ -91,17 +137,6 @@ Music.prototype.load = function (obj) {
 		}
 		obj = str.substring(0, str.length - 1);
 	}
-	self.xhr.abort();
-	self.xhr.responseType = "arraybuffer";
-	self.xhr.open("POST", "/music", true);
-	self.xhr.onload = function () {
-		self.startTime = 0;
-		self.currentTime = 0;
-		self.duration = 0;
-		self.staticTime = 0;
-		self.decode(self.xhr.response);
-	}
-	self.xhr.setRequestHeader("Content-type", 'application/x-www-form-urlencoded');
 	self.xhr.send(obj);
 }
 
@@ -120,6 +155,7 @@ Music.prototype.decode = function (arraybuffer) {
 		self.startTime = new Date();
 		self.startTime = self.startTime.getTime();
 		self.source = bufferSource;
+		self.source.onended = self.onended;
 		self.buffer = buffer;
 		self.duration = buffer.duration;
 	}, function (err) {
@@ -133,52 +169,74 @@ Music.prototype.ret = function () {
 	bs.connect(this.analyser);
 	this.source = bs;
 }
+
 Music.prototype.play = function (num) {
-	var time;
-	this.ret();
-	if (num === undefined) {
-		time = this.currentTime;
+	var self = this;
+	if (this.tag == 0) {
+		if (num) {
+			this.audio.currentTime = num;
+			this.currentTime = num;
+		}
+		this.audio.play();
+		this.paused = this.audio.paused;
 	} else {
-		time = num;
-	}
-	this.source[this.source.start ? "start" : "noteOn"](0, time, mc.duration);
-	this.startTime = new Date();
-	this.startTime = this.startTime.getTime();
-	this.staticTime = this.currentTime;
-	this.paused = false;
-	this.source.onended = this.onended;
+		var time;
+		self.ret();
+	    if (num === undefined) {
+		    time = self.currentTime;
+	    } else {
+		    time = num;
+	    }
+	    console.log(self.currentTime, self.duration);
+	    self.source[self.source.start ? "start" : "noteOn"](0, time, self.duration);
+	    self.startTime = new Date();
+	    self.startTime = self.startTime.getTime();
+	    self.staticTime = self.currentTime;
+	    self.paused = false;
+	    self.source.onended = self.onended;
+    }
 }
 Music.prototype.stop = function () {
-	this.source[this.source.stop ? "stop" : "noteOff"]();
-	this.source.onended = undefined;
-	this.paused = true;
+	var self = this;
+	if (this.tag == 0) {
+		this.audio.pause();
+		this.paused = this.audio.paused;
+	} else {
+	    self.source[self.source.stop ? "stop" : "noteOff"]();
+	    self.source.onended = undefined;
+	    self.paused = true;
+    }
 }
 Music.prototype.changeVolume = function (num) {
-	this.gainNode.gain.value = num * num * 0.25;
-	console.log(this.gainNode.gain.value);
+	if (this.tag == 0) {
+		this.audio.volume = num * num * 0.01;
+	} else {
+	    this.gainNode.gain.value = num * num * 0.25;
+	    console.log(this.gainNode.gain.value);
+	}
 }
 Music.prototype.visualize = function () {
 	var arr = new Uint8Array(this.analyser.frequencyBinCount);
 	var self = this;
 
 	function v () {
-		self.analyser.getByteFrequencyData(arr);
 		self.visual.clear();
-		if (self.vilValue.dataValue == 1) {
-			self.visual.ball(arr);
-			self.visual.boom(fonts, self);
-		} else if(self.vilValue.dataValue == 2) {
-			self.visual.rect(arr);
-			self.visual.boom(fonts, self);
+		if (self.tag) {
+		    self.analyser.getByteFrequencyData(arr);
+		    if (self.vilValue.dataValue == 1) {
+			    self.visual.ball(arr);
+		    } else if(self.vilValue.dataValue == 2) {
+			    self.visual.rect(arr);
+		    }
+	    }
+		//self.visual.boom(fonts, self);
+		if (self.tag) {
+			if (!self.paused) self.getCurrentTime();
 		} else {
-			self.visual.boom(fonts, self);
+			self.currentTime = self.audio.currentTime;
+			self.duration = self.audio.duration;
 		}
-		if (!self.paused) {
-			self.getCurrentTime();
-			if (self.timeNow !== null) {
-			    self.timeNow.style.width = (self.currentTime / self.duration) * 100 + "%";
-			}
-		}
+		self.timeNow.style.width = (self.currentTime / self.duration) * 100 + "%";
 		requestAnimationFrame(v);
 	}
 
@@ -190,4 +248,5 @@ Music.prototype.getCurrentTime = function () {
 	now = now.getTime();
 	var watch =(now - this.startTime) / 1000;
 	this.currentTime = this.staticTime + watch;
+	console.log(this.currentTime);
 }

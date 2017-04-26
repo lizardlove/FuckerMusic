@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-02-23 17:22:24
 * @Last Modified by:   10261
-* @Last Modified time: 2017-04-25 23:04:36
+* @Last Modified time: 2017-04-26 17:59:30
 */
 
 'use strict';
@@ -455,7 +455,7 @@ function musicControl () {
 	addEvent(music, "mousewheel", function (e) {
 		console.log(e.delta);
 		if (e.delta < 0) {
-			if (pageControl.volume >= 0) {
+			if (pageControl.volume > 0) {
 				pageControl.volume --;
 			}
 		} else {
@@ -514,6 +514,7 @@ function visualSel() {
 		if (this.dataValue == 3) {
 			this.dataValue = 0;
 		}
+		console.log(this.dataValue);
 		var m = this.childNodes[1];
 		switch (this.dataValue) {
 			case 0: {
