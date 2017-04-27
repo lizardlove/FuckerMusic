@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-03-06 21:25:57
 * @Last Modified by:   10261
-* @Last Modified time: 2017-04-26 18:23:56
+* @Last Modified time: 2017-04-26 22:42:49
 */
 
 'use strict';
@@ -105,7 +105,7 @@ Music.prototype.load = function (obj) {
 	
 
 	self.xhr.abort();
-	self.xhr.open("POST", "/musicUrl", true);
+	self.xhr.open("POST", "/api/musicUrl", true);
 	if (self.vilValue.dataValue == 0) {
 		obj.parse = 0;
 		self.tag = 0;
@@ -230,16 +230,12 @@ Music.prototype.visualize = function () {
 		    } else if(self.vilValue.dataValue == 2) {
 			    self.visual.rect(arr);
 		    }
-	    }
-	    if (fonts) {
-	    	self.visual.boom(fonts, self);
-	    }
-		if (self.tag) {
-			if (!self.paused) self.getCurrentTime();
-		} else {
+		    if (!self.paused) self.getCurrentTime();
+	    } else {
 			self.currentTime = self.audio.currentTime;
 			self.duration = self.audio.duration;
 		}
+	    self.visual.boom(fonts, self);
 		self.timeNow.style.width = (self.currentTime / self.duration) * 100 + "%";
 		requestAnimationFrame(v);
 	}
@@ -252,5 +248,4 @@ Music.prototype.getCurrentTime = function () {
 	now = now.getTime();
 	var watch =(now - this.startTime) / 1000;
 	this.currentTime = this.staticTime + watch;
-	console.log(this.currentTime);
 }

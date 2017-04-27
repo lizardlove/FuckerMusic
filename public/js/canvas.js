@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-04-18 23:44:08
 * @Last Modified by:   10261
-* @Last Modified time: 2017-04-25 23:12:53
+* @Last Modified time: 2017-04-27 13:14:20
 */
 
 'use strict';
@@ -61,25 +61,26 @@ CanvasRenderingContext2D.prototype.record = function(img, A, x, y, r) {
 }
 
 function boom(arrs, mc) {
-	if (mc.source && arrs) {
+	if (arrs.length !== 0) {
+		console.log(arrs);
 	    for (var i = 0; i < arrs.length; i++) {
 		    var x = parseInt(mc.currentTime - arrs[i].time);
 		    if (x > 0) {
 			    ctx.save();
-			    ctx.font = arrs[i].fontSize;
+			    ctx.font = arrs[i].style;
 			    ctx.fillStyle = arrs[i].fontColor;
 			    ctx.fillText(arrs[i].value, arrs[i].x, arrs[i].y);
+			    arrs[i].x -= (i + 1) * 0.6;
 			    if (arrs[i].x <= -500) {
 				    arrs.splice(i, 1);
 			    }
-			    arrs[i].x -= (i + 1) * 0.6;
 			    ctx.restore();
 		    }
 	    }
     }
 }
 
-function Rect(arrs, font, mc) {
+function Rect(arrs) {
 	ctx.clearRect(0, 0, WIDTH, HEIGHT);
 	ctx.fillStyle = Gradient.linearGradient;
 	var w = Math.round(WIDTH / SIZE) - 1;
@@ -90,7 +91,7 @@ function Rect(arrs, font, mc) {
 		}
 	}
 }
-function ball(arrs, font, mc) {
+function ball(arrs) {
 	ctx.clearRect(0, 0, WIDTH, HEIGHT);
 	ctx.fillStyle = Gradient.radialGradient;
 	var angle = Math.PI / 180;

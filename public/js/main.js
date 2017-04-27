@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-02-23 17:22:24
 * @Last Modified by:   10261
-* @Last Modified time: 2017-04-26 17:59:30
+* @Last Modified time: 2017-04-27 00:06:10
 */
 
 'use strict';
@@ -54,44 +54,6 @@ requestAnimationFrame = window.requestAnimationFrame ||
 //
 var master;
 var searchBox;
-// var master = {//测试
-// 	name: "zxy", 
-// 	pic: "data:asdasdasdadad",
-// 	id: 1,
-// 	font: {
-// 		size: 20,
-// 		color: "#333",
-// 		family: "苹果斜体"
-// 	},
-// 	canvas: "炫彩音阶",
-// 	list: {
-// 		love: [{
-// 			name: 'a',
-// 			author: 'aaa',
-// 			pic: './img/del.png',
-// 			src: 'http://m2.music.126.net/nJ45UVWz0VJfh_yrNVR6MQ==/3402988503925654.mp3',
-// 			lrc: 'xsddds',
-// 		},{
-// 			name: 'b',
-// 			author: "sdsd",
-// 			pic: './img/del.png',
-// 			src: 'http://m2.music.126.net/h5sli9SrGADPLn-JSMyfIg==/3420580731402332.mp3',
-// 			lrc: 'xsddds',
-// 		},{
-// 			name: 'c',
-// 			author: 'xxaas',
-// 			pic: './img/del.png',
-// 			src: 'http://m2.music.126.net/DMGuG62iX4w-aAmTnHzkcQ==/3250156389859817.mp3',
-// 			lrc: 'xsddds',
-// 		},{
-// 			name: 'd',
-// 			author: 'xxaas',
-// 			pic: './img/del.png',
-// 			src: 'http://m2.music.126.net/eAT6BEj_mz1Y5W-APFXRsw==/3433774824121252.mp3',
-// 			lrc: 'xsddds',
-// 		}]
-// 	}
-// }
 
 var fontFamily = ["微软雅黑", "苹果斜体"];
 
@@ -328,6 +290,7 @@ function search(keys) {
 						mc.stop();
 					}
 					mc.load(pageControl.musicObj);
+					getBarrage(pageControl.musicObj.id);
 				})
 				result.appendChild(see);
 			}
@@ -361,6 +324,7 @@ function musicInit(dom) {
 	}
 	mc.stop();
 	mc.load(pageControl.musicObj);
+	getBarrage(pageControl.musicObj.id);
 }
 
 function addList(dom) {
@@ -403,6 +367,7 @@ function randomMusic (list) {
 	pageControl.musicObj = list[random];
 	mc.stop();
 	mc.load(pageControl.musicObj);
+	getBarrage(pageControl.musicObj.id);
 }
 
 function preNext (flag) {
@@ -426,6 +391,7 @@ function preNext (flag) {
 			pageControl.musicObj.url = list[pageControl.order].src;
 			mc.stop();
 	        mc.load(pageControl.musicObj);
+	        getBarrage(pageControl.musicObj.id);
 		}
 	}
 }
@@ -545,25 +511,63 @@ function barrage() {
 	addEvent(bagIpt, 'keydown', function (e) {
 		if (e.keyCode == 13) {
 			var value = this.value;
-			var y = Math.random() * HEIGHT;
-			if (y < master.font.size) {
-				y += master.font.size;
-			} else if (y > (HEIGHT - master.font.size)) {
-				y -= master.font.size;
-			}
 			var font = {
 				value: value,
 				id: pageControl.musicObj.id,
 				time: mc.currentTime,
-				fontSize: master.font.size + "px " + master.font.family,
+				fontSize: master.font.size,
+				fontFamily: master.font.family,
 				fontColor: master.font.color,
-				x: WIDTH,
-				y: y
+				x: 0,
+				y: 0
 			};
 			fonts.push(font);
+			fontsRom(fonts, true);
 			this.value = "";
+			ajax({
+				url: "/us/barrage",
+				method: 'POST',
+				data: font,
+				success: function (data) {
+					console.log(data);
+				}
+			})
 		}
 	})
+}
+
+function getBarrage(id) {
+	ajax({
+		url: "/us/bge",
+		method: "POST",
+		data: {id: id},
+		success: function (data) {
+			data = JSON.parse(data);
+			fonts = data;
+			fontsRom(fonts);
+		}
+	});
+}
+
+function romdBge(font) {
+	var y = Math.random() * HEIGHT;
+	if (y < font.fontSize) {
+		y += font.fontSize;
+	} else if (y > (HEIGHT - font.fontSize)) {
+		y -= font.fontSize;
+	}
+	font.y = y;
+	font.x = WIDTH;
+	font.style = font.fontSize + "px " + font.fontFamily;
+}
+function fontsRom(font, judge) {
+	if (judge) {
+		romdBge(font[font.length - 1]);
+	} else {
+	    for (var i = 0; i < font.length; i++) {
+	    	romdBge(font[i]);
+	    }
+    }
 }
 window.onerror = function (message) {
 	alert(message);

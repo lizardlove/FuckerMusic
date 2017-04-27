@@ -2,14 +2,14 @@
 * @Author: 10261
 * @Date:   2017-02-23 16:37:22
 * @Last Modified by:   10261
-* @Last Modified time: 2017-04-26 11:17:03
+* @Last Modified time: 2017-04-26 21:50:34
 */
 
 'use strict';
 var request = require("request");
 var express = require("express");
 var bodyParser = require('body-parser');
-var api = require('./api/api.js').api
+var api = require('./api/api.js').api;
 var http = require("http");
 var app = express();
 app.use(express.static("./public"));
@@ -51,12 +51,12 @@ app.use("/api/search", function (req, res) {
 		res.end(JSON.stringify(data));
 	});
 });
-app.get("/user", function (req, res) {
+app.use("/user", function (req, res) {
 	console.log("user");
 	res.end(JSON.stringify(user));
 });
-
-app.post("/musicUrl", function(req,res) {//可视化调试
+app.use("/us", require("./user/user.js"));
+app.use("/api/musicUrl", function(req,res) {//可视化调试
 	function get(x) {
 		return new Promise(function (resolve, reject) {
 			api.parseUrl(x, function (data) {
@@ -73,12 +73,9 @@ app.post("/musicUrl", function(req,res) {//可视化调试
 			data = JSON.stringify(data);
 			res.end(data);
 		}
-	})
-	// api.parseUrl(req.body.id, data => {
-	// 	console.log(JSON.parse(data).data[0].url);
-	// 	request(JSON.parse(data).data[0].url).pipe(res);
-	// });
+	});
 });
+
 http.createServer(app).listen(8000);
 console.log("run in 8000");
 
