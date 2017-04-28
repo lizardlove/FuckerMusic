@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-02-23 17:22:24
 * @Last Modified by:   10261
-* @Last Modified time: 2017-04-27 00:06:10
+* @Last Modified time: 2017-04-28 11:58:02
 */
 
 'use strict';
@@ -525,7 +525,7 @@ function barrage() {
 			fontsRom(fonts, true);
 			this.value = "";
 			ajax({
-				url: "/us/barrage",
+				url: "/us/barrage/ist",
 				method: 'POST',
 				data: font,
 				success: function (data) {
@@ -538,7 +538,7 @@ function barrage() {
 
 function getBarrage(id) {
 	ajax({
-		url: "/us/bge",
+		url: "/us/barrage/get",
 		method: "POST",
 		data: {id: id},
 		success: function (data) {

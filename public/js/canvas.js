@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-04-18 23:44:08
 * @Last Modified by:   10261
-* @Last Modified time: 2017-04-27 13:14:20
+* @Last Modified time: 2017-04-28 12:43:01
 */
 
 'use strict';
@@ -62,7 +62,6 @@ CanvasRenderingContext2D.prototype.record = function(img, A, x, y, r) {
 
 function boom(arrs, mc) {
 	if (arrs.length !== 0) {
-		console.log(arrs);
 	    for (var i = 0; i < arrs.length; i++) {
 		    var x = parseInt(mc.currentTime - arrs[i].time);
 		    if (x > 0) {

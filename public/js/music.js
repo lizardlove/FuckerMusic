@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-03-06 21:25:57
 * @Last Modified by:   10261
-* @Last Modified time: 2017-04-26 22:42:49
+* @Last Modified time: 2017-04-28 12:45:06
 */
 
 'use strict';
@@ -57,7 +57,7 @@ function Music(option) {
 	this.analyser.fftSize = this.size * 2;
 
 	this.gainNode = Music.ac[Music.ac.createGain ? "createGain" : "createGainNode"]();
-	this.gainNode.gain.value = 10;
+	this.gainNode.gain.value = 5;
 
 	this.gainNode.connect(Music.ac.destination);
 
@@ -235,7 +235,11 @@ Music.prototype.visualize = function () {
 			self.currentTime = self.audio.currentTime;
 			self.duration = self.audio.duration;
 		}
-	    self.visual.boom(fonts, self);
+		if (self.tag && self.source) {
+			self.visual.boom(fonts, self);
+		} else if (!self.tag) {
+			self.visual.boom(fonts, self);
+		}
 		self.timeNow.style.width = (self.currentTime / self.duration) * 100 + "%";
 		requestAnimationFrame(v);
 	}

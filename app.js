@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-02-23 16:37:22
 * @Last Modified by:   10261
-* @Last Modified time: 2017-04-26 21:50:34
+* @Last Modified time: 2017-04-28 12:46:52
 */
 
 'use strict';
@@ -55,7 +55,7 @@ app.use("/user", function (req, res) {
 	console.log("user");
 	res.end(JSON.stringify(user));
 });
-app.use("/us", require("./user/user.js"));
+app.use("/us", require("./user/user").user);
 app.use("/api/musicUrl", function(req,res) {//可视化调试
 	function get(x) {
 		return new Promise(function (resolve, reject) {
