@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-02-23 16:37:22
 * @Last Modified by:   10261
-* @Last Modified time: 2017-04-28 12:46:52
+* @Last Modified time: 2017-05-18 12:40:34
 */
 
 'use strict';
@@ -15,57 +15,22 @@ var app = express();
 app.use(express.static("./public"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-var user = {
-	name: "LizardLove",
-	pic: "./img/to.png",
-	id: 0,
-	font: {
-		size: 50,
-		color: "#333",
-		family: "sans-serif"
-	},
-	list:{
-		love:[]
-	}
+function synchro(key, core) {
+	return new Promise (function (resolve, reject) {
+		api[core](key, function (data) {
+			resolve(data);
+		})
+	})
 }
 app.use("/api/search", function (req, res) {
-	console.log(req.body);
-	function get(x) {
-		return new Promise(function (resolve, reject) {
-			api.search(x, function (data) {
-				data = JSON.parse(data).result.songs;
-				var list = [];
-				for (let i = 0; i < data.length; i++) {
-			        var o = new Object();
-			        o.name = data[i].name;
-			        o.id = data[i].id;
-			        o.pic = data[i].album.picUrl;
-			        o.author = data[i].artists[0].name;
-			        list.push(o);
-		        }
-		        resolve(list);
-			});
-		});
-	}
-	get(req.body).then(function (data) {
-		res.end(JSON.stringify(data));
-	});
-});
-app.use("/user", function (req, res) {
-	console.log("user");
-	res.end(JSON.stringify(user));
+	synchro(req.body, "search").then(function (data) {
+		res.end(data);
+	})
 });
 app.use("/us", require("./user/user").user);
+
 app.use("/api/musicUrl", function(req,res) {//可视化调试
-	function get(x) {
-		return new Promise(function (resolve, reject) {
-			api.parseUrl(x, function (data) {
-				resolve(data);
-			});
-		});
-	}
-	get(req.body.id).then(function (data) {
-		console.log(req.body.parse);
+	synchro(req.body.id, "parseUrl").then(function (data) {
 		if (req.body.parse == 1) {
 			request(JSON.parse(data).data[0].url).pipe(res);
 		} else {

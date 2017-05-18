@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-02-23 17:22:24
 * @Last Modified by:   10261
-* @Last Modified time: 2017-04-28 11:58:02
+* @Last Modified time: 2017-05-18 17:41:10
 */
 
 'use strict';
@@ -54,8 +54,9 @@ requestAnimationFrame = window.requestAnimationFrame ||
 //
 var master;
 var searchBox;
+var Tourist;
 
-var fontFamily = ["微软雅黑", "苹果斜体"];
+var fontFamily = ["sans-serif", "苹果斜体"];
 
 var pageControl = {
 	pageFlag: 0,
@@ -79,10 +80,12 @@ var pageControl = {
 
 function pageInit(m) {
 	master = m;
-	$("#masterPic img").src = m.pic;
-	$("#userHeadBox img").src = m.pic;
-	$("#nameSet").placeholder = m.name;
-	$("#masterName").innerHTML = m.name;
+	$("#masterPic img").src = m.head;
+	$("#userHeadBox img").src = m.head;
+	$("#mePic img").src = m.head;
+	$("#meNick").innerHTML = m.nick;
+	$("#nameSet").placeholder = m.nick;
+	$("#masterName").innerHTML = m.nick;
 	musicListSelect("#mcList", m.list);
 	//mc.load(master.list.love[5]);
 }
@@ -121,21 +124,25 @@ function clearWidth () {
 
 function calW(dom) {
 	addEvent($(dom), 'click', function () {
-		if (pageControl.pageFlag == 0) {
-			var bigWidth, littleWidth;
-			if (pageControl.width < 800) {
-				littleWidth = "50%";
-				bigWidth = "50%";
-			} else {
-				littleWidth = "25%";
-				bigWidth = "75%";
-			}
-			$(dom + "Box").style.width = littleWidth;
-			$("#music").style.width = bigWidth;
-			pageControl.pageFlag ++;
-		} else if (pageControl.pageFlag == 1) {
-			clearWidth();
-			pageControl.pageFlag = 0;
+		if (window.localStorage.getItem("user")) {
+		    if (pageControl.pageFlag == 0) {
+			    var bigWidth, littleWidth;
+			    if (pageControl.width < 800) {
+				    littleWidth = "50%";
+				    bigWidth = "50%";
+			    } else {
+				    littleWidth = "25%";
+				    bigWidth = "75%";
+			    }
+			    $(dom + "Box").style.width = littleWidth;
+			    $("#music").style.width = bigWidth;
+			    pageControl.pageFlag ++;
+		    } else if (pageControl.pageFlag == 1) {
+			    clearWidth();
+			    pageControl.pageFlag = 0;
+		    }
+		} else {
+			$("#sign").style.display = "flex";
 		}
 	});
 }
@@ -180,6 +187,10 @@ function pageChange () {
     	})
     }
 
+    addEvent($("#goBack"), 'click', function () {
+    	$("#mengK").style.display = "none";
+    })
+
 	addEvent($("#musicSearch"), 'click', function () {
 		if (pageControl.pageFlag == 1) {
 			clearWidth();
@@ -197,20 +208,24 @@ function pageChange () {
 	});
 
 	addEvent($("#iLove img"), 'click', function () {
-		var meL = $(".meList");
-		this.src = "./img/iLove.png";
-		meL.innerHTML = '';
-		for (var key in master.list) {
-			var newLi = document.createElement("li");
-			newLi.innerHTML = key;
-			addEvent(newLi, 'click', function() {
-				master.list[this.innerHTML].push(pageControl.musicObj);
-				$(".meList").style.display = "none";
-				addList("#mcList");
-			});
-			meL.appendChild(newLi);
+		if (localStorage.getItem("user")) {
+		    var meL = $(".meList");
+		    this.src = "./img/iLove.png";
+		    meL.innerHTML = '';
+		    for (var key in master.list) {
+			    var newLi = document.createElement("li");
+			    newLi.innerHTML = key;
+			    addEvent(newLi, 'click', function() {
+				    master.list[this.innerHTML].push(pageControl.musicObj);
+				    $(".meList").style.display = "none";
+				    addList("#mcList");
+			    });
+			    meL.appendChild(newLi);
+		    }
+		    meL.style.display = "block";
+		} else {
+			$("#sign").style.display = "flex";
 		}
-		meL.style.display = "block";
 	});
 
     addEvent($("#newList"), "click", function () {
@@ -228,6 +243,30 @@ function pageChange () {
     	musicListSelect("#mcList", master.list);
     	$(".new").style.display = "none";
     })
+
+    addEvent($("#headSet"), "click", function () {
+    	$("#headSet input[type='file']").click();
+    });
+    $("#headSet input[type='file']").onchange = function () {
+    	console.log("xxxxxxxxxxx");
+    	var img = $("#userHeadBox img");
+    	var file = $("#headSet input[type='file']").files[0];
+    	var reader = new FileReader();
+    	reader.onloadend = function () {
+    		img.src = reader.result;
+    	};
+    	if (file) {
+    		reader.readAsDataURL(file);
+    	}
+
+    }
+    $("#fontSizeDet").onchange = function () {
+    	$("#fontShow").style.fontSize = this.value / 100 * 1.5 + "rem";
+    }
+
+    $("#fontColorDet").onchange = function () {
+    	$("#fontShow").style.color = this.value;
+    }
 
     calW("#musicList");
 	calW("#userSetting");
@@ -265,20 +304,27 @@ function search(keys) {
 		method: "POST",
 		success: function (data) {
 			data = JSON.parse(data);
+			console.log(data);
 			var result = $("#result");
-			searchBox = data;
+			searchBox = [];
 			result.innerHTML = '';
 			for (var i = 0; i < data.length; i++) {
+				var o =  new Object();
+				o.name = data[i].name;
+				o.id = data[i].id;
+				o.pic = data[i].album.picUrl;
+				o.author = data[i].artists[0].name;
+				searchBox.push(o);
 				var see = createDiv("see");
 				var sPic = createDiv("sPic");
 				var info = createDiv("info");
 				var infoName = createDiv("infoName");
 				var infoAuthor = createDiv("infoAuthor");
 				var ig = document.createElement("img");
-				ig.src = data[i].pic;
+				ig.src = data[i].album.picUrl;
 				see.dataValue = i;
 				infoName.innerHTML = data[i].name;
-				infoAuthor.innerHTML = data[i].author;
+				infoAuthor.innerHTML = data[i].artists[0].name;
 				info.appendChild(infoName);
 				info.appendChild(infoAuthor);
 				sPic.appendChild(ig);
@@ -312,11 +358,6 @@ function search(keys) {
 
 function musicInit(dom) {
 	var list = master.list[$("#mcList .placeHold").innerHTML];
-	// list.forEach(function (x) {
-	// 	if (dom.childNodes[0].innerHTML == x.name) {
-	// 		pageControl.musicObj = x;
-	// 	}
-	// });
 	for (var x = 0; x　< list.length; x++) {
 		if(list[x] == dom.childNodes[0].innerHTML) {
 			pageControl.musicObj = list[x];
@@ -372,7 +413,12 @@ function randomMusic (list) {
 
 function preNext (flag) {
 	var x = pageControl.mod.flag;
-	var list = master.list[$("#mcList .placeHold").innerHTML];
+	var list;
+	if (localStorage.getItem("user")) {
+	    list = master.list[$("#mcList .placeHold").innerHTML];
+	} else {
+		list = Tourist;
+	}
 	switch (x) {
 		case 0: {
 			randomMusic(list);
@@ -409,13 +455,17 @@ function musicControl () {
 		preNext(1);
 	})
 	addEvent(coreControl, 'click', function () {
-		if (mc.paused) {
-			mc.play();
-			coreControl.src = "./img/play.png";
-		} else {
-			mc.stop();
-			coreControl.src = "./img/pause.png";
-		}
+		if (mc.sourc || mc.audio.readyState) {
+		    if (mc.paused) {
+			    mc.play();
+			    coreControl.src = "./img/play.png";
+		    } else {
+			    mc.stop();
+			    coreControl.src = "./img/pause.png";
+		    }
+	    } else {
+	    	alertBox(3);
+	    }
 	});
 
 	addEvent(music, "mousewheel", function (e) {
@@ -449,27 +499,22 @@ var mc = new Music({
 	},
 	visual: canvas
 });
-ajax({
-	method: "GET",
-	url: "/user",
-	async: true,
-	success: function (data) {
-		data = JSON.parse(data);
-		console.log(data);
-		pageInit(data);
-	},
-	error: function (data) {
-		console.log(data);
-	}
-});
-function start() {
-    musicControl();
-    pageChange();
-    visualSel();
-    searchGroup();
-    barrage();
-}
-start();
+// ajax({
+// 	method: "POST",
+// 	url: "/us/sign/get",
+// 	data: {
+// 		uid: window.localStorage.getItem("user")
+// 	},
+// 	async: true,
+// 	success: function (data) {
+// 		data = JSON.parse(data);
+// 		console.log(data);
+// 		pageInit(data);
+// 	},
+// 	error: function (data) {
+// 		console.log(data);
+// 	}
+// });
 
 
 function visualSel() {
@@ -500,6 +545,8 @@ function visualSel() {
 	})
 }
 
+
+
 //弹幕
 //
 //
@@ -515,9 +562,9 @@ function barrage() {
 				value: value,
 				id: pageControl.musicObj.id,
 				time: mc.currentTime,
-				fontSize: master.font.size,
-				fontFamily: master.font.family,
-				fontColor: master.font.color,
+				fontSize: master.fontSize,
+				fontFamily: master.fontFamily,
+				fontColor: master.fontColor,
 				x: 0,
 				y: 0
 			};
@@ -569,6 +616,243 @@ function fontsRom(font, judge) {
 	    }
     }
 }
+
+
+
+//登录注册
+//
+function reValue (dom) {
+	if(dom.value) {
+		return dom.value;
+	} else {
+		dom.style.boxShadow = "0 0 0 2px red";
+		return 0;
+	}
+}
+
+function signWorng(x) {
+	var alert = $(".alertSign");
+	switch (x) {
+		case 0: {
+			alert.innerHTML = "用户已存在";
+			break;
+		}
+		case 1: {
+			alert.innerHTML = "用户名或密码错误";
+			break;
+		}
+		default: break;
+	}
+	alert.style.display = "block";
+}
+
+function sign() {
+	var up = $("#up");
+	var sIn = $("#in");
+	var sUp = $$(".sUp");
+	var toSign = $("#toSign");
+	var sClose = $("#closeSign");
+	var verif = $("#verif");
+	var sInput = $$(".signLine input");
+	up.dataValue = 1;
+	sIn.dataValue = 0;
+
+	for (var j = 0; j < sInput.length; j++) {
+		addEvent(sInput[j], 'focus', function () {
+			this.style.boxShadow = "0 0 0 2px green";
+		});
+		addEvent(sInput[j], 'blur', function () {
+			this.style.boxShadow = '';
+		})
+	}
+
+	addEvent(toSign, 'click', function () {
+		var ms = new Object();
+		var flag = 1;
+		var url = "/us/sign/sss";
+		function xAjax(x) {
+			if (x) {
+			    ajax({
+				    method: "POST",
+				    data: ms,
+				    url: url,
+				    success: function (data) {
+					    data = JSON.parse(data);
+					    console.log(data);
+					    switch (data.status) {
+					    	case 200: {
+					    		window.localStorage.setItem("user", data.uid);
+					    		console.log(localStorage);
+					    		master = data;
+					    		pageInit(data);
+					    		sClose.click();
+					    		break;
+					    	}
+					    	case 400: {
+					    		signWorng(0);
+					    		break;
+					    	}
+					    	case 402: {
+					    		signWorng(1);
+					    		break;
+					    	} 
+					    	default: break;
+					    }
+				    }
+			    })
+	        } else {
+	        	console.log("fuck");
+	        }
+		}
+		if (up.dataValue) {
+			ms.nick = reValue($("input[name='nick']"));
+	        ms.email = reValue($("input[name='email']"));
+	        if (ms.email.indexOf("@") == -1) {
+	        	$("input[name='email']").style.boxShadow = "0 0 0 2px red";
+	        	flag = 0;
+	        }
+		    ms.password = reValue($("input[name='passwordSign']"));
+			url = "/us/sign/up";
+			for (var key in ms) {
+				if (!ms[key]) {
+					flag = 0;
+				}
+			}
+			xAjax(flag);
+		} else if (sIn.dataValue) {
+			ms.email = reValue($("input[name='email']"));
+			ms.password = reValue($("input[name='passwordSign']"));
+			url = "/us/sign/in";
+			for (var key in ms) {
+				if (!ms[key]) {
+					flag = 0;
+				}
+			}
+			xAjax(flag);
+		}
+	})
+
+	addEvent(sClose, 'click', function () {
+		$("#sign").style.display = "none";
+	})
+	addEvent(up, 'click', function () {
+		sIn.style.background = "#a0e7f9";
+		up.dataValue = 1;
+		up.style.background = "#11e7ed";
+		sIn.dataValue = 0;
+		for(var i = 0; i < sUp.length; i++) {
+			sUp[i].style.display = "block";
+		}
+	});
+	addEvent(sIn, 'click', function () {
+		up.style.background = "#a0e7f9";
+		sIn.dataValue = 1;
+		sIn.style.background = "#11e7ed";
+		up.dataValue = 0;
+		for(var i = 0; i < sUp.length; i++) {
+			sUp[i].style.display = "none";
+		}
+	});
+}
+
+
+function alertBox(x) {
+	var mengK = $("#mengK");
+	var img = $("#logoBox img");
+	var det = $("#alertDet");
+	mengK.style.display = "block";
+	switch (x) {
+		case 1: {
+			img.src = "./img/fail.png";
+			det.innerHTML = "修改失败";
+			break;
+		}
+		case 2: {
+			img.src = "./img/su.png";
+			det.innerHTML = "修改成功";
+			break;
+		}
+		case 3: {
+			img.src = "./img/fail.png"
+			det.innerHTML = "请选歌";
+		}
+		default: break;
+	}
+}
+function upImg(img) {
+	var xhr = new XMLHttpRequest();
+	var form = new FormData();
+	form.append("file", img);
+	xhr.open("POST", "us/sign/img", true);
+	xhr.setRequestHeader("If-Modified-Since", "0");
+	xhr.send(form);
+}
+
+function masterMod() {
+	var sercetCfm = $("#sercetCfm");
+	var styleCfm = $("styleCfm");
+
+	addEvent(styleCfm, "click", function () {
+		var ms = new Object();
+		ms.fontSize = parseInt(reValue($("#fontSizeDet").value));
+		ms.fontColor = reValue($("#fontColorDet").value);
+		ms.fontFamily = $("#fontFamily .placeHold").innerHTML;
+		ms.status = 2;
+		ajax({
+			method: "POST",
+			url: "us/sign/update",
+			data: ms,
+			success: function (data) {
+				data = JSON.parse(data);
+				alertBox(2);
+			},
+			error: function (err) {
+				alertBox(1);
+			}
+		});
+	})
+
+	addEvent(sercetCfm, 'click', function () {
+		var msB = new Object();
+		var ms = new Object();
+		msB.nick = reValue($("#nameSet"));
+		msB.lastP = reValue($("#passwordLast"));
+		msB.password = reValue($("#passwordNew"));
+		for (var key in msB) {
+			if (msB[key]) {
+				ms[key] = msB[key];
+			}
+		}
+		ms.status = 1;
+		ms.uid = window.localStorage.getItem("user");
+		upImg($("#headSet input[type='file']").files[0]);
+		ajax({
+			method: "POST",
+			url: "us/sign/update",
+			data: ms,
+			success: function (data) {
+				data = JSON.parse(data);
+				alertBox(2);
+			},
+			error: function (err) {
+				alertBox(1);
+			}
+		});
+	});
+}
+
+
+
+function start() {
+    musicControl();
+    pageChange();
+    visualSel();
+    searchGroup();
+    barrage();
+    sign();
+}
+start();
+
 window.onerror = function (message) {
 	alert(message);
 }

@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-04-15 13:05:20
 * @Last Modified by:   10261
-* @Last Modified time: 2017-04-21 16:39:41
+* @Last Modified time: 2017-05-10 23:05:22
 */
 
 'use strict';
@@ -18,7 +18,7 @@ var search = function search(x, callback) {
 	const data = "s=" + key + "&limit=" + limit + "&type=" + type + "&offset=" + offset;
 	createRequest("/api/search/pc", "POST", data)
 	    .then(result => {
-	    	result = JSON.parse(result);
+	    	result = JSON.parse(result).result.songs;
 	    	callback && callback(JSON.stringify(result, '', 2));
 	    })
 	    .catch(err => "fetch error")
