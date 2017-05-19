@@ -298,6 +298,7 @@ input {
 li.sigMusic {
 	width: 100%;
 	height: 36px;
+	position: relative;
 }
 .sigMusic span {
 	width: 90%;
@@ -309,6 +310,22 @@ li.sigMusic {
 	background: #18a1f6;
 	text-overflow: ellipsis;
 }
+
+.sigMusic .closeSig {
+	width: 24px;
+	height: 24px;
+	position: absolute;
+	right: 30px;
+	display: none;
+	z-index: 100;
+	top: 6px;
+
+	img {
+		width: 24px;
+		height: 24px;
+	}
+}
+
 .sigMusic span:hover {
 	background: #18e3f6;
 }
@@ -611,13 +628,16 @@ li.sigMusic {
 	left: 15px;
 	top: 20px;
 }
-
 #selectVilu {
 	position: absolute;
 	top: 50%;
 	right: 15px;
 }
-
+#quit {
+	position: absolute;
+	right: 15px;
+	bottom: 65px;
+}
 
 #searchBox {
 	position: absolute;

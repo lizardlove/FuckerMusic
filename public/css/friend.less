@@ -23,6 +23,7 @@
 	font-size: .4rem;
 	top: 15px;
 	display: flex;
+	overflow: hidden;
 	justify-content: center;
 	align-items: center;
 	position: relative;
@@ -39,9 +40,12 @@
 	}
 	#meNick {
 		flex: 3;
-		display: flex;
-		justify-content: center;
-	    align-items: center;
+		line-height: 1.5rem;
+		vertical-align: middle;
+		text-align: center;
+	    text-overflow: ellipsis;
+		-o-text-overflow: ellipsis; 
+		overflow: hidden;
 	}
 }
 #friendChoice {
@@ -130,12 +134,37 @@
 		}
 	}
 	.friendNick {
-		flex: 4;
+		flex: 6;
 		height: 100%;
-		display: flex;
 		font-size: 0.25rem;
+		text-overflow:ellipsis; 
+		-o-text-overflow:ellipsis; 
+		overflow:hidden;
+		line-height: 0.8rem;
+		vertical-align: middle;
+		text-align: center;
+	}
+	.delFriend {
+		flex: 2;
+		height: 100%;
+		display: none;
 		justify-content: center;
 		align-items: center;
+		img {
+			width: 0.6rem;
+			height: 0.6rem;
+		}
+	}
+	.addFriend {
+		flex: 2;
+		height: 100%;
+		display: none;
+		justify-content: center;
+		align-items: center;
+		img {
+			width: 0.6rem;
+			height: 0.6rem;
+		}
 	}
 }
 .friend:hover {

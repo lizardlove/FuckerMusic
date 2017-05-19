@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-02-23 17:22:24
 * @Last Modified by:   10261
-* @Last Modified time: 2017-05-18 17:41:10
+* @Last Modified time: 2017-05-20 01:03:51
 */
 
 'use strict';
@@ -86,6 +86,7 @@ function pageInit(m) {
 	$("#meNick").innerHTML = m.nick;
 	$("#nameSet").placeholder = m.nick;
 	$("#masterName").innerHTML = m.nick;
+	getUserMusic(m.uid);
 	musicListSelect("#mcList", m.list);
 	//mc.load(master.list.love[5]);
 }
@@ -104,6 +105,7 @@ function moreSelect(dom, list) {
 }
 function musicListSelect(dom, list) {
 	var placeHold = $(dom + " .placeHold");
+	$(dom + " ul").innerHTML = "";
 	for (var key in list) {
 		var newLi = document.createElement('li');
 		placeHold.innerHTML = key;
@@ -216,9 +218,29 @@ function pageChange () {
 			    var newLi = document.createElement("li");
 			    newLi.innerHTML = key;
 			    addEvent(newLi, 'click', function() {
+				    var ms = new Object();
 				    master.list[this.innerHTML].push(pageControl.musicObj);
-				    $(".meList").style.display = "none";
-				    addList("#mcList");
+				    ms.uid = localStorage.getItem("user");
+				    ms.name = pageControl.musicObj.name;
+				    ms.id = pageControl.musicObj.id;
+				    ms.author = pageControl.musicObj.author;
+				    ms.pic = pageControl.musicObj.pic;
+				    ms.sort = this.innerHTML;
+				    ajax({
+				    	method: "POST",
+				    	url: "us/consumer/music",
+				    	data: ms,
+				    	success: function (data) {
+				    		data = JSON.parse(data);
+				    		if (data.status == 200) {
+				    			$(".meList").style.display = "none";
+				                addList("#mcList");
+				    		} else {
+				    			$(".meList").style.display = "none";
+				    			alertBox(6);
+				    		}
+				    	}
+				    })
 			    });
 			    meL.appendChild(newLi);
 		    }
@@ -238,17 +260,36 @@ function pageChange () {
 
     addEvent($(".confirmBox .yes"), 'click', function () {
     	var list = $("input[name=newList]").value;
-    	master.list[list] = [];
-    	console.log(master);
-    	musicListSelect("#mcList", master.list);
-    	$(".new").style.display = "none";
+    	var str = "";
+    	for (var key in master.list) {
+    		str += key + "#";
+    	}
+    	str += list;
+    	var ms = new Object();
+    	ms.uid = localStorage.getItem("user");
+    	ms.data = str;
+    	ajax({
+    		method: "POST",
+    		url: "us/consumer/upList",
+    		data: ms,
+    		success: function (data) {
+    			data = JSON.parse(data);
+    			if (data.status == 200) {
+    				alertBox(4);
+    				master.list[list] = [];
+    	            musicListSelect("#mcList", master.list);
+    				$(".new").style.display = "none";
+    			} else {
+    				alertBox(5);
+    			}
+    		}
+    	})
     })
 
     addEvent($("#headSet"), "click", function () {
     	$("#headSet input[type='file']").click();
     });
     $("#headSet input[type='file']").onchange = function () {
-    	console.log("xxxxxxxxxxx");
     	var img = $("#userHeadBox img");
     	var file = $("#headSet input[type='file']").files[0];
     	var reader = new FileReader();
@@ -267,6 +308,11 @@ function pageChange () {
     $("#fontColorDet").onchange = function () {
     	$("#fontShow").style.color = this.value;
     }
+
+    addEvent($("#quit"), 'click', function () {
+    	localStorage.clear();
+    	clearWidth();
+    })
 
     calW("#musicList");
 	calW("#userSetting");
@@ -304,7 +350,6 @@ function search(keys) {
 		method: "POST",
 		success: function (data) {
 			data = JSON.parse(data);
-			console.log(data);
 			var result = $("#result");
 			searchBox = [];
 			result.innerHTML = '';
@@ -359,11 +404,13 @@ function search(keys) {
 function musicInit(dom) {
 	var list = master.list[$("#mcList .placeHold").innerHTML];
 	for (var x = 0; x　< list.length; x++) {
-		if(list[x] == dom.childNodes[0].innerHTML) {
+		if(list[x].name == dom.childNodes[1].innerHTML) {
 			pageControl.musicObj = list[x];
 		}
 	}
-	mc.stop();
+	if (mc.source || mc.audio.readyState) {
+		mc.stop();
+	}
 	mc.load(pageControl.musicObj);
 	getBarrage(pageControl.musicObj.id);
 }
@@ -376,12 +423,42 @@ function addList(dom) {
 	    for (var i = 0; i < listDet.length; i ++) {
 		    var newLi = document.createElement("li");
 		    var newSpan = document.createElement("span");
+		    var newD = document.createElement("div");
+		    newD.className = "closeSig";
 		    newLi.className = "sigMusic";
 		    addEvent(newLi, 'click', function () {
 		    	var self = this;
 		    	musicInit(self);
+		    });
+		    addEvent(newD, 'click', function (e) {
+		    	var list = master.list[$("#mcList .placeHold").innerHTML];
+	            for (var x = 0; x　< list.length; x++) {
+		            if(list[x].name == newLi.childNodes[1].innerHTML) {
+			            var ms = new Object();
+			            ms.uid = localStorage.getItem("user");
+			            ms.id = list[x].id;
+			            list.splice(x, 1);
+			            ajax({
+			            	method: "POST",
+			            	url: "us/consumer/delM",
+			            	data: ms,
+			            	success: function (data) {
+			            		addList("#mcList");
+			            	}
+			            });
+		            }
+	            }
+	            e.stopPropagation();
+		    })
+		    addEvent(newLi, 'mouseover', function () {
+		    	this.childNodes[0].style.display = "block";
+		    });
+		    addEvent(newLi, "mouseout", function () {
+		    	this.childNodes[0].style.display = "none";
 		    })
 		    newSpan.innerHTML = listDet[i].name;
+		    newD.innerHTML = "<img src='./img/close.png' />";
+		    newLi.appendChild(newD);
 		    newLi.appendChild(newSpan);
 		    $(dom + "Det").appendChild(newLi);
 	    }
@@ -405,10 +482,16 @@ function timeJump() {
 function randomMusic (list) {
 	var random = Math.random() * list.length - 1;
 	random = parseInt(random);
-	pageControl.musicObj = list[random];
-	mc.stop();
-	mc.load(pageControl.musicObj);
-	getBarrage(pageControl.musicObj.id);
+	if (list[random]) {
+		pageControl.musicObj = list[random];
+	    if (mc.source || mc.audio.readyState) {
+		    mc.stop();
+	    }
+	    mc.load(pageControl.musicObj);
+	    getBarrage(pageControl.musicObj.id);
+	} else {
+		alertBox(7);
+	}
 }
 
 function preNext (flag) {
@@ -435,7 +518,9 @@ function preNext (flag) {
 				pageControl.order --;
 			}
 			pageControl.musicObj.url = list[pageControl.order].src;
-			mc.stop();
+			if (mc.source || mc.audio.readyState) {
+				mc.stop();
+			}
 	        mc.load(pageControl.musicObj);
 	        getBarrage(pageControl.musicObj.id);
 		}
@@ -455,7 +540,7 @@ function musicControl () {
 		preNext(1);
 	})
 	addEvent(coreControl, 'click', function () {
-		if (mc.sourc || mc.audio.readyState) {
+		if (mc.source || mc.audio.readyState) {
 		    if (mc.paused) {
 			    mc.play();
 			    coreControl.src = "./img/play.png";
@@ -499,33 +584,17 @@ var mc = new Music({
 	},
 	visual: canvas
 });
-// ajax({
-// 	method: "POST",
-// 	url: "/us/sign/get",
-// 	data: {
-// 		uid: window.localStorage.getItem("user")
-// 	},
-// 	async: true,
-// 	success: function (data) {
-// 		data = JSON.parse(data);
-// 		console.log(data);
-// 		pageInit(data);
-// 	},
-// 	error: function (data) {
-// 		console.log(data);
-// 	}
-// });
+
 
 
 function visualSel() {
 	var sel = $("#selectVilu");
-	sel.dataValue = 1;
+	sel.dataValue = 0;
 	addEvent(sel, 'click', function () {
 		this.dataValue++;
 		if (this.dataValue == 3) {
 			this.dataValue = 0;
 		}
-		console.log(this.dataValue);
 		var m = this.childNodes[1];
 		switch (this.dataValue) {
 			case 0: {
@@ -646,6 +715,29 @@ function signWorng(x) {
 	alert.style.display = "block";
 }
 
+function getUserMusic(uid) {
+	ajax({
+		method: "POST",
+		url: "us/consumer/getMusic",
+		data:{uid:uid},
+		success: function (data) {
+			data = JSON.parse(data);
+			if (data.status == 200) {
+				for (var i = 0; i < data.result.length; i++) {
+					var o = new Object();
+					o.name = data.result[i].name;
+					o.author = data.result[i].author;
+					o.id = data.result[i].music_id;
+					o.pic = data.result[i].pic;
+					master.list[data.result[i].sort].push(o);
+				}
+			} else {
+				console.log(data);
+			}
+		}
+	})
+}
+
 function sign() {
 	var up = $("#up");
 	var sIn = $("#in");
@@ -678,11 +770,9 @@ function sign() {
 				    url: url,
 				    success: function (data) {
 					    data = JSON.parse(data);
-					    console.log(data);
 					    switch (data.status) {
 					    	case 200: {
 					    		window.localStorage.setItem("user", data.uid);
-					    		console.log(localStorage);
 					    		master = data;
 					    		pageInit(data);
 					    		sClose.click();
@@ -773,8 +863,29 @@ function alertBox(x) {
 			break;
 		}
 		case 3: {
-			img.src = "./img/fail.png"
+			img.src = "./img/fail.png";
 			det.innerHTML = "请选歌";
+			break;
+		}
+		case 4: {
+			img.src = "./img/su.png";
+			det.innerHTML = "创建成功";
+			break;
+		}
+		case 5: {
+			img.src = "./img/fail.png";
+			det.innerHTML = "创建失败";
+			break;
+		}
+		case 6: {
+			img.src = "./img/fail.png";
+			det.innerHTML = "该歌曲已添加";
+			break;
+		}
+		case 7: {
+			img.src = "./img/fail.png";
+			det.innerHTML = "请为你的歌单添加歌曲";
+			break;
 		}
 		default: break;
 	}
@@ -782,25 +893,36 @@ function alertBox(x) {
 function upImg(img) {
 	var xhr = new XMLHttpRequest();
 	var form = new FormData();
+	xhr.onreadystatechange = function (e) {
+        if (xhr.readyState == 4) {
+            if (xhr.status == 200) {
+                console.log(xhr.responseText);
+            } else {
+                console.log(xhr.error);
+            }
+        }
+    }
+	form.append("uid", localStorage.getItem("user"));
 	form.append("file", img);
-	xhr.open("POST", "us/sign/img", true);
+	xhr.open("POST", "us/consumer/img", true);
 	xhr.setRequestHeader("If-Modified-Since", "0");
 	xhr.send(form);
 }
 
 function masterMod() {
 	var sercetCfm = $("#sercetCfm");
-	var styleCfm = $("styleCfm");
+	var styleCfm = $("#styleCfm");
 
 	addEvent(styleCfm, "click", function () {
 		var ms = new Object();
-		ms.fontSize = parseInt(reValue($("#fontSizeDet").value));
-		ms.fontColor = reValue($("#fontColorDet").value);
+		ms.uid = localStorage.getItem("user");
+		ms.fontSize = parseInt($("#fontSizeDet").value);
+		ms.fontColor = $("#fontColorDet").value;
 		ms.fontFamily = $("#fontFamily .placeHold").innerHTML;
 		ms.status = 2;
 		ajax({
 			method: "POST",
-			url: "us/sign/update",
+			url: "us/consumer/upInfo",
 			data: ms,
 			success: function (data) {
 				data = JSON.parse(data);
@@ -815,9 +937,13 @@ function masterMod() {
 	addEvent(sercetCfm, 'click', function () {
 		var msB = new Object();
 		var ms = new Object();
-		msB.nick = reValue($("#nameSet"));
-		msB.lastP = reValue($("#passwordLast"));
-		msB.password = reValue($("#passwordNew"));
+		var nameSet = $("#nameSet");
+		var passwordLast = $("#passwordLast");
+		var passwordNew = $("#passwordNew");
+		ms.uid = localStorage.getItem("user");
+		msB.nick = reValue(nameSet);
+		msB.lastP = reValue(passwordLast);
+		msB.password = reValue(passwordNew);
 		for (var key in msB) {
 			if (msB[key]) {
 				ms[key] = msB[key];
@@ -825,13 +951,22 @@ function masterMod() {
 		}
 		ms.status = 1;
 		ms.uid = window.localStorage.getItem("user");
-		upImg($("#headSet input[type='file']").files[0]);
+		if ($("#headSet input[type='file']").files[0]) {
+			upImg($("#headSet input[type='file']").files[0]);
+		}
 		ajax({
 			method: "POST",
-			url: "us/sign/update",
+			url: "us/consumer/upMaster",
 			data: ms,
 			success: function (data) {
 				data = JSON.parse(data);
+				nameSet.style.boxShadow = "none";
+				nameSet.placeholder = master.nick;
+				passwordLast.style.boxShadow = "none";
+				passwordLast.value = "";
+				passwordNew.style.boxShadow = "none";
+				passwordNew.value = "";
+				getMaster();
 				alertBox(2);
 			},
 			error: function (err) {
@@ -842,14 +977,142 @@ function masterMod() {
 }
 
 
+function getMaster () {
+	if(localStorage.getItem("user")) {
+    	ajax({
+	        method: "POST",
+	        url: "/us/sign/get",
+	        data: {
+		        uid: window.localStorage.getItem("user")
+	        },
+	        async: true,
+	        success: function (data) {
+		        console.log(data);
+		        data = JSON.parse(data);
+		        pageInit(data);
+	        },
+	        error: function (data) {
+		    console.log(data);
+	        }
+        });
+    }
+}
+
+function getUser(uid, x) {
+	ajax({
+		method: "POST",
+		url: "us/consumer/getUser",
+		data: {uid: uid},
+		success: function (data) {
+			data = JSON.parse(data)[0];
+			var parent, friends, friendPic, picImg, friendNick, core, coreImg, url;
+			friends = createDiv("friend");
+			friendPic = createDiv("friendPic");
+			picImg = document.createElement("img");
+			friendNick = createDiv("friendNick");
+			coreImg = document.createElement("img");
+			picImg.src = data.head;
+			friendPic.appendChild(picImg);
+			friends.setAttribute("data-value", data.uid);
+			friendNick.innerHTML = data.nick;
+			switch (x) {
+				case 1: {
+					parent = $("#online");
+					core = createDiv("addFriend");
+					coreImg.src = "./img/new.png";
+					core.appendChild(coreImg);
+					url = "us/consumer/addFriend";
+					break;
+				}
+				case 2: {
+					if ($(".friend[data-value='" + data.uid + "']")) {
+					    $(".friend[data-value='" + data.uid + "']").style.display = "none";
+				    }
+					parent = $("#myFriend");
+					core = createDiv("delFriend");
+					coreImg.src = "./img/x.png";
+					core.appendChild(coreImg);
+					url = "us/consumer/delFriend";
+					break;
+				}
+				default: break;
+			}
+			addEvent(core, "click", function () {
+				if ($(".friend[data-value='" + data.uid + "']")) {
+					$(".friend[data-value='" + data.uid + "']").style.display = "none";
+				}
+		        var value = this.dataValue;
+		        ajax({
+			        method: "POST",
+			        url: url,
+			        data: {
+				        masterU: localStorage.getItem("user"),
+				        friendU: value
+			        },
+			        success: function (data) {
+				        data = JSON.parse(data);
+				        if (x == 1) {
+				        	getUser(value, 2);
+				        }
+			        }
+		        });
+			})
+			core.dataValue = data.uid;
+			friends.appendChild(friendPic);
+			friends.appendChild(friendNick);
+			friends.appendChild(core);
+			addEvent(friends, "mouseover", function () {
+				this.childNodes[2].style.display = "flex";
+			});
+			addEvent(friends, "mouseout", function () {
+				this.childNodes[2].style.display = "none";
+			});
+			parent.appendChild(friends);
+		}
+	})
+} 
+
+function friend() {
+	ajax({
+		method: "POST",
+		url: "us/consumer/getAll",
+		success: function (data) {
+			data = JSON.parse(data);
+			for (var i = 0; i < data.length; i++) {
+				if (data[i].uid != localStorage.getItem("user")) {
+					getUser(data[i].uid, 1);
+				}
+			}
+		}
+	});
+	ajax({
+		method: "POST",
+		url: "us/consumer/getFriend",
+		data: {uid: localStorage.getItem("user")},
+		success: function (data) {
+			data = JSON.parse(data);
+			if (data.length) {
+				for (var i = 0; i < data.length; i++) {
+					getUser(data[i].friendU, 2);
+				}
+			}
+		}
+	});
+}
 
 function start() {
     musicControl();
     pageChange();
     visualSel();
+    masterMod();
     searchGroup();
     barrage();
     sign();
+
+    getMaster();
+
+    friend();
+
 }
 start();
 

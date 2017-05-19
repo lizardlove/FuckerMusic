@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-04-28 11:01:14
 * @Last Modified by:   10261
-* @Last Modified time: 2017-05-14 23:00:34
+* @Last Modified time: 2017-05-19 18:04:14
 */
 
 'use strict';
@@ -15,7 +15,7 @@ router.use(bodyParser.urlencoded({ extended: false }));
 
 function intUser(data, uid) {
 	return new Promise(function (resolve, reject) {
-		mysql.query("INSERT INTO user set ?", {
+		mysql.query("INSERT INTO user SET ?", {
 			uid: uid, 
 			nick: data.nick,
 			email: data.email,
@@ -24,6 +24,7 @@ function intUser(data, uid) {
 			fontSize: 25,
 			fontColor: "#000",
 			fontFamily: "sans-serif",
+			list: "love",
 			verif: uid
 		}, function (err, rows) {
 			if (err) {
@@ -54,9 +55,16 @@ function getUser(data) {
 				result = JSON.stringify(result);
 				result = JSON.parse(result)[0];
 				if (result !== undefined) {
-					if (result.list != null) {
-						result.list = result.list.split("&");
+					var list = new Object();
+					if (result.list.indexOf("#") != -1) {
+						var listDet = result.list.split("#");
+						for (let i = 0; i < listDet.length; i++) {
+							list[listDet[i]] = [];
+						}
+					} else {
+						list[result.list] = [];
 					}
+					result.list = list;
 					console.log("get");
 				}
 				resolve(JSON.stringify(result));
@@ -76,10 +84,8 @@ router.post("/up", function (req, res) {
 					res.end(JSON.stringify(rs));
 				} else {
 					getUser(uid).then(function (rst) {
-						console.log(rst);
 						rs = JSON.parse(rst);
 						rs.status = 200;
-						console.log("OK");
 						res.end(JSON.stringify(rs));
 					});
 				}
@@ -108,7 +114,7 @@ router.post("/in",function (req, res) {
 			}
 		}
 	});
-})
+});
 router.post("/get", function (req, res) {
 	getUser(req.body.uid).then(function (result) {
 		res.end(result);
