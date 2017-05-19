@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-02-23 17:22:24
 * @Last Modified by:   10261
-* @Last Modified time: 2017-05-20 01:03:51
+* @Last Modified time: 2017-05-20 01:19:56
 */
 
 'use strict';
@@ -56,7 +56,7 @@ var master;
 var searchBox;
 var Tourist;
 
-var fontFamily = ["sans-serif", "苹果斜体"];
+var fontFamily = ["sans-serif"];
 
 var pageControl = {
 	pageFlag: 0,
