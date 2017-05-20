@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-02-23 17:22:24
 * @Last Modified by:   10261
-* @Last Modified time: 2017-05-20 13:48:09
+* @Last Modified time: 2017-05-20 13:55:13
 */
 
 'use strict';
@@ -1021,6 +1021,7 @@ function getMaster () {
     			}
     			pageControl.musicObj = Tourist[0];
     			mc.load(Tourist[0]);
+    			getBarrage(pageControl.musicObj.id);
     			console.log(data);
     		}
     	});
