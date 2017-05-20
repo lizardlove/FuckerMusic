@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-02-23 17:22:24
 * @Last Modified by:   10261
-* @Last Modified time: 2017-05-20 01:19:56
+* @Last Modified time: 2017-05-20 13:26:43
 */
 
 'use strict';
@@ -54,7 +54,7 @@ requestAnimationFrame = window.requestAnimationFrame ||
 //
 var master;
 var searchBox;
-var Tourist;
+var Tourist = [];
 
 var fontFamily = ["sans-serif"];
 
@@ -88,7 +88,9 @@ function pageInit(m) {
 	$("#masterName").innerHTML = m.nick;
 	getUserMusic(m.uid);
 	musicListSelect("#mcList", m.list);
-	//mc.load(master.list.love[5]);
+	if (master.list.love[0]) {
+		mc.load(master.list.love[0]);
+	}
 }
 
 function moreSelect(dom, list) {
@@ -377,7 +379,7 @@ function search(keys) {
 				see.appendChild(info);
 				addEvent(see, 'click', function () {
 					pageControl.musicObj = searchBox[this.dataValue];
-					if (mc.source) {
+					if (mc.active) {
 						mc.stop();
 					}
 					mc.load(pageControl.musicObj);
@@ -408,7 +410,7 @@ function musicInit(dom) {
 			pageControl.musicObj = list[x];
 		}
 	}
-	if (mc.source || mc.audio.readyState) {
+	if (mc.active) {
 		mc.stop();
 	}
 	mc.load(pageControl.musicObj);
@@ -480,11 +482,12 @@ function timeJump() {
 }
 
 function randomMusic (list) {
+	console.log(list);
 	var random = Math.random() * list.length - 1;
 	random = parseInt(random);
 	if (list[random]) {
 		pageControl.musicObj = list[random];
-	    if (mc.source || mc.audio.readyState) {
+	    if (mc.active) {
 		    mc.stop();
 	    }
 	    mc.load(pageControl.musicObj);
@@ -518,7 +521,7 @@ function preNext (flag) {
 				pageControl.order --;
 			}
 			pageControl.musicObj.url = list[pageControl.order].src;
-			if (mc.source || mc.audio.readyState) {
+			if (mc.active) {
 				mc.stop();
 			}
 	        mc.load(pageControl.musicObj);
@@ -540,7 +543,7 @@ function musicControl () {
 		preNext(1);
 	})
 	addEvent(coreControl, 'click', function () {
-		if (mc.source || mc.audio.readyState) {
+		if (mc.active) {
 		    if (mc.paused) {
 			    mc.play();
 			    coreControl.src = "./img/play.png";
@@ -995,6 +998,26 @@ function getMaster () {
 		    console.log(data);
 	        }
         });
+    } else {
+    	ajax({
+    		method: "POST",
+    		url: "api/top",
+    		data: {idx: 1},
+    		async: true,
+    		success: function (data) {
+    			data = JSON.parse(data).result.tracks; 
+    			for (var i = 0; i < data.length; i++) {
+    				var o = new Object();
+    				o.name = data[i].name;
+				    o.id = data[i].id;
+				    o.pic = data[i].album.picUrl;
+				    o.author = data[i].artists[0].name;
+				    Tourist.push(o);
+    			}
+    			mc.load(Tourist[0]);
+    			console.log(data);
+    		}
+    	});
     }
 }
 

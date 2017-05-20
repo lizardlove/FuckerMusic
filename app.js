@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-02-23 16:37:22
 * @Last Modified by:   10261
-* @Last Modified time: 2017-05-18 12:40:34
+* @Last Modified time: 2017-05-20 12:58:05
 */
 
 'use strict';
@@ -40,6 +40,11 @@ app.use("/api/musicUrl", function(req,res) {//可视化调试
 		}
 	});
 });
+app.use("/api/top", function (req, res) {
+	synchro(req.body.idx, "top").then(function (data) {
+		res.end(data);
+	})
+})
 
 http.createServer(app).listen(8000);
 console.log("run in 8000");

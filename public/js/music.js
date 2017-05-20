@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-03-06 21:25:57
 * @Last Modified by:   10261
-* @Last Modified time: 2017-04-28 12:45:06
+* @Last Modified time: 2017-05-20 13:25:21
 */
 
 'use strict';
@@ -50,6 +50,8 @@ function Music(option) {
 
 	this.paused = false;
 
+	this.active = false;
+
 	this.size = option.size;
 
 	this.onended = option.onended;
@@ -81,17 +83,22 @@ Music.ac = new (window.AudioContext||window.webkitAudioContext)();
 
 Music.prototype.load = function (obj) {
 	var self = this;
-	var list = master.list;
 	var x = false;
-	obj.parse = 1;
-	for (var key in list) {
-		var m = list[key];
-		for (var i = 0; i < m.length; i++) {
-			if (m[i].id === obj.id) {
-				x = true;
-			}
-		}
+	console.log(obj);
+	if (master) {
+        var list = master.list; 
+        for (var key in list) {
+		    var m = list[key];
+		    for (var i = 0; i < m.length; i++) {
+			    if (m[i].id === obj.id) {
+				    x = true;
+			    }
+		    }
+	    } 
 	}
+	
+	obj.parse = 1;
+	
 	if (x) {
 		self.info.love.src = "./img/iLove.png";
 	} else {
@@ -115,6 +122,7 @@ Music.prototype.load = function (obj) {
 			self.startTime = 0;
 			self.staticTime = 0;
 			self.currentTime = 0;
+			self.active = true;
 			self.duration = self.audio.duration;
 			console.log(self.audio.duration);
 			console.log(self.audio.currentTime);
@@ -124,10 +132,12 @@ Music.prototype.load = function (obj) {
 		self.tag = 1;
 		self.xhr.responseType = "arraybuffer";
 		self.xhr.onload = function () {
+			self.audio.pause();
 			self.startTime = 0;
 			self.staticTime = 0;
 			self.currentTime = 0;
 			self.duration = 0;
+			self.active = true;
 			self.decode(self.xhr.response);
 		}
 	}

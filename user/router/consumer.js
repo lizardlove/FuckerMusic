@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-04-28 11:07:21
 * @Last Modified by:   10261
-* @Last Modified time: 2017-05-20 00:44:20
+* @Last Modified time: 2017-05-20 12:52:48
 */
 
 'use strict';
@@ -195,6 +195,7 @@ function delThat(x, data) {
 		}
 	})
 }
+
 router.post("/addFriend", function (req, res) {
 	insThat("friend", req.body).then(function (result) {
 		res.end(JSON.stringify(result));
