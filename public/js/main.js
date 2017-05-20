@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-02-23 17:22:24
 * @Last Modified by:   10261
-* @Last Modified time: 2017-05-20 13:55:13
+* @Last Modified time: 2017-05-20 14:39:24
 */
 
 'use strict';
@@ -43,9 +43,17 @@ function addEvent(obj, type, fun, bool) {
 	}
 };
 
-requestAnimationFrame = window.requestAnimationFrame || 
-                        window.webkitRequestAnimationFrame || 
-                        window.mozRequestAnimationFrame;
+// requestAnimationFrame = window.requestAnimationFrame || 
+//                         window.webkitRequestAnimationFrame || 
+//                         window.mozRequestAnimationFrame;
+window.requestAnimationFrame = (function(){
+	return  window.requestAnimationFrame       ||
+            window.webkitRequestAnimationFrame ||
+            window.mozRequestAnimationFrame    ||
+            function( callback ){
+            	window.setTimeout(callback, 1000 / 60);
+            };
+})();
 
 
 
