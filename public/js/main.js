@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-02-23 17:22:24
 * @Last Modified by:   10261
-* @Last Modified time: 2017-05-20 13:32:47
+* @Last Modified time: 2017-05-20 13:48:09
 */
 
 'use strict';
@@ -666,6 +666,7 @@ function getBarrage(id) {
 		data: {id: id},
 		success: function (data) {
 			data = JSON.parse(data);
+			console.log(data);
 			fonts = data;
 			fontsRom(fonts);
 		}
@@ -1018,6 +1019,7 @@ function getMaster () {
 				    o.author = data[i].artists[0].name;
 				    Tourist.push(o);
     			}
+    			pageControl.musicObj = Tourist[0];
     			mc.load(Tourist[0]);
     			console.log(data);
     		}
