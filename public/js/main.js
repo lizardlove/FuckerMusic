@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-02-23 17:22:24
 * @Last Modified by:   10261
-* @Last Modified time: 2017-05-20 13:26:43
+* @Last Modified time: 2017-05-20 13:32:47
 */
 
 'use strict';
@@ -52,7 +52,11 @@ requestAnimationFrame = window.requestAnimationFrame ||
 //页面配置
 //
 //
-var master;
+var master = {
+	fontSize: 25,
+	fontColor: '#000',
+	fontFamily: "sans-serif"
+};
 var searchBox;
 var Tourist = [];
 
