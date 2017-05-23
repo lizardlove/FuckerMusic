@@ -2,10 +2,11 @@
 * @Author: 10261
 * @Date:   2017-04-10 10:33:33
 * @Last Modified by:   10261
-* @Last Modified time: 2017-04-20 13:35:54
+* @Last Modified time: 2017-05-20 18:36:40
 */
 
 // 参考 https://github.com/darknessomi/musicbox/wiki/
+// token生成
 'use strict'
 const crypto = require('crypto')
 const bigInt = require('big-integer')

@@ -2,32 +2,30 @@
 * @Author: 10261
 * @Date:   2017-03-06 21:25:57
 * @Last Modified by:   10261
-* @Last Modified time: 2017-05-20 13:25:21
+* @Last Modified time: 2017-05-20 17:54:35
 */
 
 'use strict';
-// var fonts = [{
-// 	value: "重邮小傻逼",
-// 	fontSize: "50px sans-serif",
-// 	fontColor: "#000",
-// 	x: WIDTH,
-// 	time: 15,
-// 	y: Math.random() * HEIGHT - 1
-// }]
+//由于音乐可视化需要解析音频数据，会造成缓冲时间大大增加
+//故Music对象有2套播放系统
+//1. 使用 web audio api封装的，用以解析音频数据实现可视化的方案
+//2. 使用dom audio 封装的，不进行可视化，好处是播放加载快
+
 var fonts = [];
 function Music(option) {
 
 	//tag = 1，表示执行可视化，为0表示不执行可视化
 	this.tag = 1;
 
-	this.audio = new Audio();
-	this.audio.addEventListener("ended", function () {
+	this.audio = new Audio(); //dom audio对象，作为不显示可视化的备选方案
+	this.audio.addEventListener("ended", function () { //绑定播放结束事件
 		option.onended();
 	});
-	this.audio.volume = 0.5;
 
-	this.info = {
-		img: option.img,
+	this.audio.volume = 0.5;//设置基本音频音量，不然在移动端初始化的时候会导致声效很小
+
+	this.info = {//音乐信息展示对象
+		img: option.img, 
 		name: option.name,
 		author: option.author,
 		love: option.love
@@ -38,52 +36,55 @@ function Music(option) {
 	//执行可视化时，采用web audio api封装的模式
 	this.vilValue = option.vilValue;
 
-	this.timeNow = option.timeNow || null;
+	this.timeNow = option.timeNow || null; //显示当前已播放进度时间长度
 
-	this.analyser = Music.ac.createAnalyser();
+	this.analyser = Music.ac.createAnalyser(); // web audio api  音频解析的中间件
 
-	this.source = null;
+	this.source = null; // 缓存音频数据
 
-	this.buffer = [];
+	this.buffer = []; // 缓存为二进制音频数据
 
-	this.count = 0;
+	this.count = 0;//用户在当前歌曲还未加载完毕的情况下，又点击播放其他歌曲，会进行统计，只解析最后点击的歌曲
 
-	this.paused = false;
 
-	this.active = false;
+	this.paused = false; //音乐播放是否暂停
 
-	this.size = option.size;
+	this.active = false; //该对象是否在运行
 
-	this.onended = option.onended;
+	this.size = option.size;//音频解析基本配置信息
 
-	this.analyser.fftSize = this.size * 2;
+	this.onended = option.onended;//播放结束事件 web audio api绑定
 
-	this.gainNode = Music.ac[Music.ac.createGain ? "createGain" : "createGainNode"]();
-	this.gainNode.gain.value = 5;
+	this.analyser.fftSize = this.size * 2; //设置analyser解析的参数
+
+	this.gainNode = Music.ac[Music.ac.createGain ? "createGain" : "createGainNode"]();//音量函数
+	this.gainNode.gain.value = 5; // 设置基础音量
 
 	this.gainNode.connect(Music.ac.destination);
 
 	this.analyser.connect(this.gainNode);
 
-	this.startTime = 0;
+	//web audio api对象，只有播放和结束2个状态，不能暂停和重新播放，时间跳转，播放暂停得函数需要自己封装
+	this.startTime = 0; //播放开始时当前浏览器时间
 
-	this.currentTime = 0;
+	this.currentTime = 0; //跳转的时间长度
 
-	this.duration = 0;
+	this.duration = 0;//音频时间长度
 
-	this.staticTime = 0;
+	this.staticTime = 0;//静态时间，只记录播放了多长时间
 
-	this.visual = option.visual;
+	this.visual = option.visual; //可视化函数——canvas实现
 
-	this.xhr = new window.XMLHttpRequest();
+	this.xhr = new window.XMLHttpRequest(); //使用ajax获取音频数据
 
-	this.visualize();
+	this.visualize();//执行可视化
 }
-Music.ac = new (window.AudioContext||window.webkitAudioContext)();
+Music.ac = new (window.AudioContext||window.webkitAudioContext)(); // web aduio api对象
 
+//音乐加载函数
 Music.prototype.load = function (obj) {
 	var self = this;
-	var x = false;
+	var x = false; //判断当前歌曲是否是当前用户喜欢的歌曲
 	console.log(obj);
 	if (master) {
         var list = master.list; 
@@ -111,9 +112,9 @@ Music.prototype.load = function (obj) {
 	//以上为信息配置，下面为ajax配置
 	
 
-	self.xhr.abort();
+	self.xhr.abort(); //重新加载音乐时，停止上一次的加载
 	self.xhr.open("POST", "/api/musicUrl", true);
-	if (self.vilValue.dataValue == 0) {
+	if (self.vilValue.dataValue == 0) {//不执行可视化
 		obj.parse = 0;
 		self.tag = 0;
 		self.xhr.responseType = "text";
@@ -128,7 +129,7 @@ Music.prototype.load = function (obj) {
 			console.log(self.audio.currentTime);
 			self.audio.play();
 		}
-	} else {
+	} else {//执行可视化
 		self.tag = 1;
 		self.xhr.responseType = "arraybuffer";
 		self.xhr.onload = function () {
@@ -152,7 +153,7 @@ Music.prototype.load = function (obj) {
 	self.xhr.send(obj);
 }
 
-Music.prototype.decode = function (arraybuffer) {
+Music.prototype.decode = function (arraybuffer) {//音频解码函数，获取的二进制音频数据需要解析成频域音频数据才能进行可视化
 	var self = this;
 	var n = ++this.count;
 	this.source && this.stop();
@@ -175,14 +176,14 @@ Music.prototype.decode = function (arraybuffer) {
 	})
 }
 
-Music.prototype.ret = function () {
+Music.prototype.ret = function () { //用以 可视化模型下的播放暂停，即暂停后重新播放时候，重新加载缓存的音频数据，不用再去获取
 	var bs = Music.ac.createBufferSource();
 	bs.buffer = this.buffer;
 	bs.connect(this.analyser);
 	this.source = bs;
 }
 
-Music.prototype.play = function (num) {
+Music.prototype.play = function (num) { // 播放函数
 	var self = this;
 	if (this.tag == 0) {
 		if (num) {
@@ -208,7 +209,7 @@ Music.prototype.play = function (num) {
 	    self.source.onended = self.onended;
     }
 }
-Music.prototype.stop = function () {
+Music.prototype.stop = function () {//暂停函数
 	var self = this;
 	if (this.tag == 0) {
 		this.audio.pause();
@@ -219,7 +220,7 @@ Music.prototype.stop = function () {
 	    self.paused = true;
     }
 }
-Music.prototype.changeVolume = function (num) {
+Music.prototype.changeVolume = function (num) { //改变音量接口
 	if (this.tag == 0) {
 		this.audio.volume = num * num * 0.01;
 	} else {
@@ -227,7 +228,7 @@ Music.prototype.changeVolume = function (num) {
 	    console.log(this.gainNode.gain.value);
 	}
 }
-Music.prototype.visualize = function () {
+Music.prototype.visualize = function () { //可视化函数
 	var arr = new Uint8Array(this.analyser.frequencyBinCount);
 	var self = this;
 
@@ -257,7 +258,7 @@ Music.prototype.visualize = function () {
 	requestAnimationFrame(v);
 }
 
-Music.prototype.getCurrentTime = function () {
+Music.prototype.getCurrentTime = function () {//封装的获取currentTime
 	var now = new Date();
 	now = now.getTime();
 	var watch =(now - this.startTime) / 1000;

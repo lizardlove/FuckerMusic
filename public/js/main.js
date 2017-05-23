@@ -2,14 +2,11 @@
 * @Author: 10261
 * @Date:   2017-02-23 17:22:24
 * @Last Modified by:   10261
-* @Last Modified time: 2017-05-20 14:39:24
+* @Last Modified time: 2017-05-23 16:36:17
 */
 
 'use strict';
 //全局基础
-//
-//
-//
 function $(dom) {
 	return document.querySelector(dom);
 };
@@ -42,10 +39,6 @@ function addEvent(obj, type, fun, bool) {
 			})
 	}
 };
-
-// requestAnimationFrame = window.requestAnimationFrame || 
-//                         window.webkitRequestAnimationFrame || 
-//                         window.mozRequestAnimationFrame;
 window.requestAnimationFrame = (function(){
 	return  window.requestAnimationFrame       ||
             window.webkitRequestAnimationFrame ||
@@ -54,30 +47,33 @@ window.requestAnimationFrame = (function(){
             	window.setTimeout(callback, 1000 / 60);
             };
 })();
-
-
+//快速dom创建
+function createDiv(str) {
+	var dom = document.createElement("div");
+	dom.className = str;
+	return dom;
+}
 
 //页面配置
-//
-//
-var master = {
+var master = {//页面主人——用户
 	fontSize: 25,
 	fontColor: '#000',
 	fontFamily: "sans-serif"
 };
-var searchBox;
-var Tourist = [];
+var searchBox; //搜索结果保存
+var Tourist = []; //当前热门歌曲集合
 
-var fontFamily = ["sans-serif"];
+var fontFamily = ["sans-serif"]; 
 
+//页面控制信息
 var pageControl = {
-	pageFlag: 0,
-	modifyFlag: 0,
-	volume: 0,
-	order: 0,
+	pageFlag: 0, //是否显示设置，歌单，用户区域
+	modifyFlag: 0,//音乐播放模式
+	volume: 0, //页面音量
+	order: 0,//当前播放音乐的顺序
 	width: document.body.offsetWidth,
 	height: document.body.offsetHeight,
-	musicObj: {},
+	musicObj: {},//音乐播放信息对象
 	mod: {
 		flag: 0,
 		det: ['random.png', 'sig.png', 'circle.png']
@@ -85,11 +81,8 @@ var pageControl = {
 }
 
 //页面控制
-//
-//
-//
-//
 
+//页面初始化，登录，退出操作后，页面重新加载
 function pageInit(m) {
 	master = m;
 	$("#masterPic img").src = m.head;
@@ -105,6 +98,7 @@ function pageInit(m) {
 	}
 }
 
+//实现select方案
 function moreSelect(dom, list) {
 	var placeHold = $(dom + " .placeHold");
 	for(var i = 0; i < list.length; i++) {
@@ -117,6 +111,8 @@ function moreSelect(dom, list) {
 		$(dom + " ul").appendChild(newLi);
 	}
 }
+
+//单独封装的音乐select方案
 function musicListSelect(dom, list) {
 	var placeHold = $(dom + " .placeHold");
 	$(dom + " ul").innerHTML = "";
@@ -131,6 +127,8 @@ function musicListSelect(dom, list) {
 		$(dom + " ul").appendChild(newLi);
 	}
 }
+
+//清除页面宽度
 function clearWidth () {
 	$("#music").style.width = "100%";
 	$("#musicListBox").style.width = "0";
@@ -138,6 +136,7 @@ function clearWidth () {
 	$("#friendListBox").style.width = "0";
 }
 
+//给点击对象，页面动态改变宽度
 function calW(dom) {
 	addEvent($(dom), 'click', function () {
 		if (window.localStorage.getItem("user")) {
@@ -163,6 +162,7 @@ function calW(dom) {
 	});
 }
 
+//播放模式选择函数，单曲，顺序，随机
 function choiceMod() {
 	var prev = $("#choiceMod .prev");
 	var next = $("#choiceMod .next");
@@ -193,9 +193,10 @@ function choiceMod() {
 	})
 }
 
+//页面控制函数——二级模块 
 function pageChange () {
 
-    var back = $$(".back");
+    var back = $$(".back");//给所有back绑定返回函数
     for (var b = 0; b < back.length; b++) {
     	addEvent(back[b], 'click', function () {
     		clearWidth();
@@ -203,10 +204,12 @@ function pageChange () {
     	})
     }
 
+    //弹窗确定按钮——绑定点击事件——清除页面
     addEvent($("#goBack"), 'click', function () {
     	$("#mengK").style.display = "none";
     })
 
+    //音乐搜索按钮——显示或隐藏搜索区
 	addEvent($("#musicSearch"), 'click', function () {
 		if (pageControl.pageFlag == 1) {
 			clearWidth();
@@ -217,12 +220,14 @@ function pageChange () {
 		}
 	});
 
+
 	addEvent($(".close"), 'click', function () {
 		clearWidth();
 		pageControl.pageFlag = 0;
 		$("#searchBox").style.display = "none";
 	});
 
+	//喜欢事件，用户点击，如果歌单没有，添加进歌单
 	addEvent($("#iLove img"), 'click', function () {
 		if (localStorage.getItem("user")) {
 		    var meL = $(".meList");
@@ -264,14 +269,17 @@ function pageChange () {
 		}
 	});
 
+	//新建歌单
     addEvent($("#newList"), "click", function () {
     	$(".new").style.display = "block";
     });
 
+    //取消新建歌单
     addEvent($(".confirmBox .no"), 'click', function () {
     	$(".new").style.display = "none";
     })
 
+    //确认新建歌单
     addEvent($(".confirmBox .yes"), 'click', function () {
     	var list = $("input[name=newList]").value;
     	var str = "";
@@ -300,6 +308,7 @@ function pageChange () {
     	})
     })
 
+    //设置头像，选取本体图片，使用canvas实现预览
     addEvent($("#headSet"), "click", function () {
     	$("#headSet input[type='file']").click();
     });
@@ -315,22 +324,26 @@ function pageChange () {
     	}
 
     }
+
+    //用户弹幕设置——字体大小
     $("#fontSizeDet").onchange = function () {
     	$("#fontShow").style.fontSize = this.value / 100 * 1.5 + "rem";
     }
 
+    //用户弹幕设置——字体颜色
     $("#fontColorDet").onchange = function () {
     	$("#fontShow").style.color = this.value;
     }
 
+    //退出操作
     addEvent($("#quit"), 'click', function () {
     	localStorage.clear();
     	clearWidth();
     })
 
-    calW("#musicList");
-	calW("#userSetting");
-	calW("#friendList");
+    calW("#musicList");//显示歌单区
+	calW("#userSetting");//显示设置区
+	calW("#friendList");//显示朋友区
 	moreSelect("#fontFamilyDet", fontFamily);
 	choiceMod();
 
@@ -352,11 +365,7 @@ function searchGroup() {
 	})
 }
 
-function createDiv(str) {
-	var dom = document.createElement("div");
-	dom.className = str;
-	return dom;
-}
+//ajax——搜索歌曲——根据结果添加相应的dom
 function search(keys) {
 	ajax({
 		url: "/api/search",
@@ -414,7 +423,7 @@ function search(keys) {
 
 //音乐控制
 
-
+//音乐播放初始化
 function musicInit(dom) {
 	var list = master.list[$("#mcList .placeHold").innerHTML];
 	for (var x = 0; x　< list.length; x++) {
@@ -429,6 +438,7 @@ function musicInit(dom) {
 	getBarrage(pageControl.musicObj.id);
 }
 
+//动态显示歌单函数
 function addList(dom) {
 	var placeHold = $(dom + " .placeHold");
 	if ($(dom +　"Det")) {
@@ -479,7 +489,7 @@ function addList(dom) {
 	}
 }
 
-
+//时间跳转函数
 function timeJump() {
 	var timeLine = $("#timeLine");
 	addEvent(timeLine, 'click', function (e) {
@@ -492,7 +502,7 @@ function timeJump() {
 		}
 	});
 }
-
+//随机音乐播放
 function randomMusic (list) {
 	console.log(list);
 	var random = Math.random() * list.length - 1;
@@ -508,7 +518,7 @@ function randomMusic (list) {
 		alertBox(7);
 	}
 }
-
+//前进-回退按键操作
 function preNext (flag) {
 	var x = pageControl.mod.flag;
 	var list;
@@ -542,6 +552,7 @@ function preNext (flag) {
 	}
 }
 
+//给页面dom绑定播放暂停，前进回退操作
 function musicControl () {
 	var pre = $("#pre");
 	var next = $("#next");
@@ -568,6 +579,7 @@ function musicControl () {
 	    }
 	});
 
+	//鼠标滑轮实现音量大小控制
 	addEvent(music, "mousewheel", function (e) {
 		console.log(e.delta);
 		if (e.delta < 0) {
@@ -585,7 +597,7 @@ function musicControl () {
 }
 
 
-
+//封装的Music对象
 var mc = new Music({
 	size: 32,
 	timeNow: $("#timeNow"),
@@ -601,7 +613,7 @@ var mc = new Music({
 });
 
 
-
+//动态绑定可视化效果
 function visualSel() {
 	var sel = $("#selectVilu");
 	sel.dataValue = 0;
@@ -632,10 +644,6 @@ function visualSel() {
 
 
 //弹幕
-//
-//
-//
-//
 
 function barrage() {
 	var bagIpt = $('#danmu');
@@ -667,6 +675,7 @@ function barrage() {
 	})
 }
 
+//获取当前歌曲的弹幕
 function getBarrage(id) {
 	ajax({
 		url: "/us/barrage/get",
@@ -680,7 +689,7 @@ function getBarrage(id) {
 		}
 	});
 }
-
+//弹幕随机初始高度
 function romdBge(font) {
 	var y = Math.random() * HEIGHT;
 	if (y < font.fontSize) {
@@ -704,8 +713,10 @@ function fontsRom(font, judge) {
 
 
 
-//登录注册
-//
+//登录注册模块
+
+
+//返回input值
 function reValue (dom) {
 	if(dom.value) {
 		return dom.value;
@@ -715,6 +726,7 @@ function reValue (dom) {
 	}
 }
 
+//登录注册-错误提示
 function signWorng(x) {
 	var alert = $(".alertSign");
 	switch (x) {
@@ -731,6 +743,7 @@ function signWorng(x) {
 	alert.style.display = "block";
 }
 
+//获取用户歌单
 function getUserMusic(uid) {
 	ajax({
 		method: "POST",
@@ -754,6 +767,7 @@ function getUserMusic(uid) {
 	})
 }
 
+//注册登录函数——二级模块
 function sign() {
 	var up = $("#up");
 	var sIn = $("#in");
@@ -810,7 +824,7 @@ function sign() {
 	        	console.log("fuck");
 	        }
 		}
-		if (up.dataValue) {
+		if (up.dataValue) {//注册模块
 			ms.nick = reValue($("input[name='nick']"));
 	        ms.email = reValue($("input[name='email']"));
 	        if (ms.email.indexOf("@") == -1) {
@@ -825,7 +839,7 @@ function sign() {
 				}
 			}
 			xAjax(flag);
-		} else if (sIn.dataValue) {
+		} else if (sIn.dataValue) {//登录模块
 			ms.email = reValue($("input[name='email']"));
 			ms.password = reValue($("input[name='passwordSign']"));
 			url = "/us/sign/in";
@@ -838,6 +852,7 @@ function sign() {
 		}
 	})
 
+	//关闭注册登录
 	addEvent(sClose, 'click', function () {
 		$("#sign").style.display = "none";
 	})
@@ -861,7 +876,7 @@ function sign() {
 	});
 }
 
-
+//页面弹窗
 function alertBox(x) {
 	var mengK = $("#mengK");
 	var img = $("#logoBox img");
@@ -906,6 +921,8 @@ function alertBox(x) {
 		default: break;
 	}
 }
+
+//图片上传——用户头像
 function upImg(img) {
 	var xhr = new XMLHttpRequest();
 	var form = new FormData();
@@ -925,11 +942,12 @@ function upImg(img) {
 	xhr.send(form);
 }
 
+//更改用户设置——头像，昵称，弹幕样式
 function masterMod() {
 	var sercetCfm = $("#sercetCfm");
 	var styleCfm = $("#styleCfm");
 
-	addEvent(styleCfm, "click", function () {
+	addEvent(styleCfm, "click", function () {//弹幕样式更改
 		var ms = new Object();
 		ms.uid = localStorage.getItem("user");
 		ms.fontSize = parseInt($("#fontSizeDet").value);
@@ -942,6 +960,7 @@ function masterMod() {
 			data: ms,
 			success: function (data) {
 				data = JSON.parse(data);
+				getMaster();
 				alertBox(2);
 			},
 			error: function (err) {
@@ -950,7 +969,7 @@ function masterMod() {
 		});
 	})
 
-	addEvent(sercetCfm, 'click', function () {
+	addEvent(sercetCfm, 'click', function () {//用户信息更改
 		var msB = new Object();
 		var ms = new Object();
 		var nameSet = $("#nameSet");
@@ -992,9 +1011,9 @@ function masterMod() {
 	});
 }
 
-
+//获取用户信息——如果没登录，获取热门歌曲
 function getMaster () {
-	if(localStorage.getItem("user")) {
+	if(localStorage.getItem("user")) {//获取用户信息
     	ajax({
 	        method: "POST",
 	        url: "/us/sign/get",
@@ -1011,7 +1030,7 @@ function getMaster () {
 		    console.log(data);
 	        }
         });
-    } else {
+    } else {//获取热门歌曲
     	ajax({
     		method: "POST",
     		url: "api/top",
@@ -1035,6 +1054,9 @@ function getMaster () {
     	});
     }
 }
+
+//用户区
+//
 
 function getUser(uid, x) {
 	ajax({
@@ -1111,7 +1133,7 @@ function getUser(uid, x) {
 } 
 
 function friend() {
-	ajax({
+	ajax({//获取在线用户信息
 		method: "POST",
 		url: "us/consumer/getAll",
 		success: function (data) {
@@ -1123,7 +1145,7 @@ function friend() {
 			}
 		}
 	});
-	ajax({
+	ajax({//获取朋友信息
 		method: "POST",
 		url: "us/consumer/getFriend",
 		data: {uid: localStorage.getItem("user")},
@@ -1138,6 +1160,7 @@ function friend() {
 	});
 }
 
+//主函数——一级模块
 function start() {
     musicControl();
     pageChange();
@@ -1152,8 +1175,9 @@ function start() {
     friend();
 
 }
-start();
 
+start();
+//全局报错设置
 window.onerror = function (message) {
 	alert(message);
 }

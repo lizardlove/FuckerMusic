@@ -2,10 +2,11 @@
 * @Author: 10261
 * @Date:   2017-04-01 10:33:33
 * @Last Modified by:   10261
-* @Last Modified time: 2017-04-20 13:36:18
+* @Last Modified time: 2017-05-20 18:36:29
 */
 
 'use strict';
+//token生成，封装request请求
 const Encrypt = require('./crypto.js')
 const http = require('http')
 function createWebAPIRequest(host, path, method, data, cookie, callback, errorcallback) {

@@ -2,10 +2,12 @@
 * @Author: 10261
 * @Date:   2017-04-18 23:44:08
 * @Last Modified by:   10261
-* @Last Modified time: 2017-04-28 12:43:01
+* @Last Modified time: 2017-05-20 17:31:40
 */
 
 'use strict';
+
+//canvas基础配置
 var canvasBox = document.querySelector("#bgC");
 var WIDTH = document.querySelector("#music").offsetWidth;
 var HEIGHT = document.querySelector("#music").offsetHeight;
@@ -19,10 +21,13 @@ var deg = 0.5;
 var cva = document.createElement("canvas");
 var ctx = cva.getContext("2d");
 var Gradient = {};
+
+//柱图可视化的线性渐变
 Gradient.linearGradient = ctx.createLinearGradient(0, HEIGHT, 0, 0);
 Gradient.linearGradient.addColorStop(0, '#e6cbf1');
 Gradient.linearGradient.addColorStop(0.5, '#09e7ed');
 Gradient.linearGradient.addColorStop(1, '#2ecb5d');
+//圆可视化的径向渐变
 Gradient.radialGradient = ctx.createRadialGradient(X, Y, 0, X, Y, RADIUS);
 Gradient.radialGradient.addColorStop(0, '#e6cbf1');
 Gradient.radialGradient.addColorStop(0.5, '#09e7ed');
@@ -32,6 +37,7 @@ cva.width = WIDTH;
 cva.height = HEIGHT;
 canvasBox.appendChild(cva);
 
+//圆可视化—径向增长
 CanvasRenderingContext2D.prototype.sector = function (x, y, r, sA, eA) {
 	this.save();
 	this.translate(x, y);
@@ -48,6 +54,8 @@ CanvasRenderingContext2D.prototype.sector = function (x, y, r, sA, eA) {
 	this.restore();
 	return this;
 }
+
+//唱片旋转的效果
 CanvasRenderingContext2D.prototype.record = function(img, A, x, y, r) {
 	this.save();
 	this.translate(x, y);
@@ -59,7 +67,7 @@ CanvasRenderingContext2D.prototype.record = function(img, A, x, y, r) {
 	this.restore();
 	return this;
 }
-
+//弹幕功能实现
 function boom(arrs, mc) {
 	if (arrs.length !== 0) {
 	    for (var i = 0; i < arrs.length; i++) {
@@ -78,7 +86,7 @@ function boom(arrs, mc) {
 	    }
     }
 }
-
+// 柱状图可视化函数
 function Rect(arrs) {
 	ctx.clearRect(0, 0, WIDTH, HEIGHT);
 	ctx.fillStyle = Gradient.linearGradient;
@@ -90,6 +98,8 @@ function Rect(arrs) {
 		}
 	}
 }
+
+//圆可视化函数
 function ball(arrs) {
 	ctx.clearRect(0, 0, WIDTH, HEIGHT);
 	ctx.fillStyle = Gradient.radialGradient;
@@ -104,6 +114,7 @@ function ball(arrs) {
 	deg += 0.5;
 }
 
+//canvas功能集成对象
 var canvas = {
 	ball: ball,
 	rect: Rect,

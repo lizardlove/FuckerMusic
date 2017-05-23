@@ -2,10 +2,12 @@
 * @Author: 10261
 * @Date:   2017-04-26 21:21:44
 * @Last Modified by:   10261
-* @Last Modified time: 2017-04-26 21:34:49
+* @Last Modified time: 2017-05-20 18:37:55
 */
 
 'use strict';
+
+//数据库链接
 var mysql = require("mysql");
 
 var connection = mysql.createConnection({
