@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-02-23 17:22:24
 * @Last Modified by:   10261
-* @Last Modified time: 2017-05-23 16:36:17
+* @Last Modified time: 2017-05-26 13:13:46
 */
 
 'use strict';
@@ -1046,8 +1046,8 @@ function getMaster () {
 				    o.author = data[i].artists[0].name;
 				    Tourist.push(o);
     			}
-    			pageControl.musicObj = Tourist[0];
-    			mc.load(Tourist[0]);
+    			pageControl.musicObj = Tourist[12];
+    			$("#next").click();
     			getBarrage(pageControl.musicObj.id);
     			console.log(data);
     		}

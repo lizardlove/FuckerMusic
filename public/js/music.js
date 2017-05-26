@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-03-06 21:25:57
 * @Last Modified by:   10261
-* @Last Modified time: 2017-05-20 17:54:35
+* @Last Modified time: 2017-05-26 13:10:12
 */
 
 'use strict';
@@ -85,7 +85,6 @@ Music.ac = new (window.AudioContext||window.webkitAudioContext)(); // web aduio 
 Music.prototype.load = function (obj) {
 	var self = this;
 	var x = false; //判断当前歌曲是否是当前用户喜欢的歌曲
-	console.log(obj);
 	if (master) {
         var list = master.list; 
         for (var key in list) {
@@ -114,12 +113,14 @@ Music.prototype.load = function (obj) {
 
 	self.xhr.abort(); //重新加载音乐时，停止上一次的加载
 	self.xhr.open("POST", "/api/musicUrl", true);
+	console.log(self.vilValue.dataValue);
 	if (self.vilValue.dataValue == 0) {//不执行可视化
 		obj.parse = 0;
 		self.tag = 0;
 		self.xhr.responseType = "text";
 		self.xhr.onload = function () {
 			self.audio.src = JSON.parse(self.xhr.response).data[0].url;
+			console.log(self.audio);
 			self.startTime = 0;
 			self.staticTime = 0;
 			self.currentTime = 0;
