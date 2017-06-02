@@ -2,7 +2,7 @@
 * @Author: 10261
 * @Date:   2017-02-23 17:22:24
 * @Last Modified by:   10261
-* @Last Modified time: 2017-05-26 13:13:46
+* @Last Modified time: 2017-06-01 16:04:06
 */
 
 'use strict';
@@ -134,12 +134,13 @@ function clearWidth () {
 	$("#musicListBox").style.width = "0";
 	$("#userSettingBox").style.width = "0";
 	$("#friendListBox").style.width = "0";
+	$("#musicSearchBox").style.width = "0";
 }
 
 //给点击对象，页面动态改变宽度
 function calW(dom) {
 	addEvent($(dom), 'click', function () {
-		if (window.localStorage.getItem("user")) {
+		if (window.localStorage.getItem("user") || this == $("#musicSearch") ) {
 		    if (pageControl.pageFlag == 0) {
 			    var bigWidth, littleWidth;
 			    if (pageControl.width < 800) {
@@ -152,12 +153,13 @@ function calW(dom) {
 			    $(dom + "Box").style.width = littleWidth;
 			    $("#music").style.width = bigWidth;
 			    pageControl.pageFlag ++;
+			    console.log("ss");
 		    } else if (pageControl.pageFlag == 1) {
 			    clearWidth();
 			    pageControl.pageFlag = 0;
 		    }
 		} else {
-			$("#sign").style.display = "flex";
+			$("#sign").style.top = "2rem";
 		}
 	});
 }
@@ -205,27 +207,27 @@ function pageChange () {
     }
 
     //弹窗确定按钮——绑定点击事件——清除页面
-    addEvent($("#goBack"), 'click', function () {
-    	$("#mengK").style.display = "none";
-    })
+    // addEvent($("#goBack"), 'click', function () {
+    // 	$("#mengK").style.display = "none";
+    // })
 
     //音乐搜索按钮——显示或隐藏搜索区
-	addEvent($("#musicSearch"), 'click', function () {
-		if (pageControl.pageFlag == 1) {
-			clearWidth();
-			pageControl.pageFlag = 0;
-		} else {
-			$("#searchBox").style.display = "block";
-			pageControl.pageFlag ++;
-		}
-	});
+	// addEvent($("#musicSearch"), 'click', function () {
+	// 	if (pageControl.pageFlag == 1) {
+	// 		clearWidth();
+	// 		pageControl.pageFlag = 0;
+	// 	} else {
+	// 		$("#searchBox").style.display = "block";
+	// 		pageControl.pageFlag ++;
+	// 	}
+	// });
 
 
-	addEvent($(".close"), 'click', function () {
-		clearWidth();
-		pageControl.pageFlag = 0;
-		$("#searchBox").style.display = "none";
-	});
+	// addEvent($(".close"), 'click', function () {
+	// 	clearWidth();
+	// 	pageControl.pageFlag = 0;
+	// 	$("#searchBox").style.display = "none";
+	// });
 
 	//喜欢事件，用户点击，如果歌单没有，添加进歌单
 	addEvent($("#iLove img"), 'click', function () {
@@ -344,6 +346,7 @@ function pageChange () {
     calW("#musicList");//显示歌单区
 	calW("#userSetting");//显示设置区
 	calW("#friendList");//显示朋友区
+	calW("#musicSearch");
 	moreSelect("#fontFamilyDet", fontFamily);
 	choiceMod();
 
@@ -854,7 +857,7 @@ function sign() {
 
 	//关闭注册登录
 	addEvent(sClose, 'click', function () {
-		$("#sign").style.display = "none";
+		$("#sign").style.top = "-6rem";
 	})
 	addEvent(up, 'click', function () {
 		sIn.style.background = "#a0e7f9";
@@ -878,48 +881,52 @@ function sign() {
 
 //页面弹窗
 function alertBox(x) {
-	var mengK = $("#mengK");
-	var img = $("#logoBox img");
+	var mengBox = $("#mengBox");
+	// var img = $("#logoBox img");
 	var det = $("#alertDet");
-	mengK.style.display = "block";
+	mengBox.style.bottom = "0.5rem";
 	switch (x) {
 		case 1: {
-			img.src = "./img/fail.png";
+			// img.src = "./img/fail.png";
 			det.innerHTML = "修改失败";
 			break;
 		}
 		case 2: {
-			img.src = "./img/su.png";
+			// img.src = "./img/su.png";
 			det.innerHTML = "修改成功";
 			break;
 		}
 		case 3: {
-			img.src = "./img/fail.png";
+			// img.src = "./img/fail.png";
 			det.innerHTML = "请选歌";
 			break;
 		}
 		case 4: {
-			img.src = "./img/su.png";
+			// img.src = "./img/su.png";
 			det.innerHTML = "创建成功";
 			break;
 		}
 		case 5: {
-			img.src = "./img/fail.png";
+			// img.src = "./img/fail.png";
 			det.innerHTML = "创建失败";
 			break;
 		}
 		case 6: {
-			img.src = "./img/fail.png";
+			// img.src = "./img/fail.png";
 			det.innerHTML = "该歌曲已添加";
 			break;
 		}
 		case 7: {
-			img.src = "./img/fail.png";
+			// img.src = "./img/fail.png";
 			det.innerHTML = "请为你的歌单添加歌曲";
 			break;
 		}
 		default: break;
 	}
+
+	setTimeout(function () {
+		mengBox.style.bottom = "-1rem";
+	}, 10000);
 }
 
 //图片上传——用户头像

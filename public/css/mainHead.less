@@ -644,30 +644,40 @@ li.sigMusic {
 /*搜索结构*/
 
 /*********************************************/
-#searchBox {
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	width: 100%;
+// #searchBox {
+// 	position: absolute;
+// 	top: 0;
+// 	left: 0;
+// 	right: 0;
+// 	bottom: 0;
+// 	width: 100%;
+// 	height: 100%;
+// 	display: none;
+// 	z-index: 96;
+
+// 	.close {
+// 		width: 1rem;
+// 		height: 1rem;
+// 		position: absolute;
+// 		right: 0.5rem;
+// 		top: 0.3rem;
+// 		z-index: 100;
+
+// 		img {
+// 			width: 1rem;
+// 			height: 1rem;
+// 		}
+// 	}
+// }
+#musicSearchBox {
+	width: 0;
 	height: 100%;
-	display: none;
-	z-index: 96;
-
-	.close {
-		width: 1rem;
-		height: 1rem;
-		position: absolute;
-		right: 0.5rem;
-		top: 0.3rem;
-		z-index: 100;
-
-		img {
-			width: 1rem;
-			height: 1rem;
-		}
-	}
+	position: relative;
+	float: left;
+	z-index: 1;
+	transition: width 1s;
+	overflow: hidden;
+	background: linear-gradient(to bottom, #09e7ed, #f7e7f2);
 }
 
 .meng {
@@ -684,7 +694,7 @@ li.sigMusic {
 }
 
 #search {
-	width: 50%;
+	width: 80%;
 	height: 1rem;
 	margin: 0 auto;
 	position: relative;
@@ -694,10 +704,10 @@ li.sigMusic {
 	border-radius: 0.5rem;
 	z-index: 100;
 	margin-top: 0.5rem;
-	@media (max-width: 800px) {
-		margin-top: 0.9rem;
-		width: 70%;
-	}
+	// @media (max-width: 800px) {
+	// 	margin-top: 0.9rem;
+	// 	width: 70%;
+	// }
 
 	#searchInput {
 		width: calc(100% - 1rem);
@@ -737,31 +747,35 @@ li.sigMusic {
 	right: 0;
 	bottom: 0;
 	overflow-y: auto;
-	padding: 0.5rem;
+	// padding: 0.5rem;
 	z-index: 100;
-	display: flex;
-	flex-flow: row wrap;
-	align-content: flex-start;
-	justify-content: space-between;
+	// display: flex;
+	// flex-flow: row wrap;
+	// align-content: flex-start;
+	// justify-content: space-between;
 }
 .see {
-    flex: 0 0 4rem;
+    width: 90%;
     margin-top: 0.3rem;
+    margin-left: 5%;
     height: 1.5rem;
 
     .sPic {
-    	width: 1.5rem;
+    	width: 30%;
     	height: 100%;
     	float: left;
+    	display: flex;
+    	justift-content: center;
+    	align-items: center;
 
     	img {
-    		width: 1.5rem;
-    		height: 1.5rem;
+    		width: 100%;
+    		// height: 100%;
     		border-radius: 50%;
     	}
     }
     .info {
-    	width: 2.3rem;
+    	width: 70%;
     	float: right;
     	height: 100%;
     	color: #fff;
@@ -772,6 +786,7 @@ li.sigMusic {
     		font-size: 0.45rem;
     		line-height: 0.9rem;
     		overflow: hidden;
+    		text-align: center;
     		vertical-align: middle;
     		text-overflow: ellipsis;
     	}
@@ -793,30 +808,43 @@ li.sigMusic {
 
 /*********************************************/
 #sign {
+	// position: absolute;
+	// top: 0;
+	// left: 0;
+	// right: 0;
+	// bottom: 0;
+	// width: 100%;
+	// height: 100%;
+	// display: none;
+	// justify-content: center;
+	// align-items: center;
 	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	width: 100%;
-	height: 100%;
-	display: none;
-	justify-content: center;
-	align-items: center;
+	right: 0.5rem;
+	top: -6rem;
+	transition: top 2s;
+	width: auto;
+	height: 6rem;
+	@media (max-width: 800px) {
+		right: 1rem;
+	}
 }
 #up {
 	background: #11e7ed;
 }
 #closeSign {
-	width: 0.6rem;
-	height: 0.6rem;
+	width: 1rem;
+	height: 1rem;
 	position: absolute;
-	right: -0.3rem;
-	top: -0.3rem;
+	right: 2rem;
+	z-index: 105;
+	@media (max-width: 800px) {
+		right: 3.5rem;
+	}
+	top: -1.3rem;
 
 	img {
-		width: 0.6rem;
-		height: 0.6rem;
+		width: 1rem;
+		height: 1rem;
 	}
 }
 #signBox {
@@ -901,12 +929,17 @@ li.sigMusic {
 		text-align: center;
 		font-size: 0.3rem;
 	}
+	#goToSign {
+		width: 100%;
+		height: 1rem;
+		position: relative;
+	}
 	#toSign {
 		width: 40%;
 		position: relative;
-		margin-top: 0.2rem;
+		margin-top: 0.15rem;
 		margin-left: 30%;
-		margin-bottom: 0.2rem;
+		// margin-bottom: 0.3rem;
 		height: .7rem;
 		line-height: .7rem;
 		font-size: 0.4rem;
@@ -923,78 +956,118 @@ li.sigMusic {
 /*弹窗结构*/
 
 /*********************************************/
-#mengK {
-	position: absolute;
-	left: 0;
-	right: 0;
-	top: 0;
-	bottom: 0;
-	display: none;
-	width: 100%;
-	height: 100%;
-	z-index: 200;
-}
-#mengLL {
-	position: absolute;
-	left: 0;
-	right: 0;
-	top: 0;
-	bottom: 0;
-	width: 100%;
-	height: 100%;
-	z-index: 201;
-	background: #000;
-	opacity: 0.7;
-}
 #mengBox {
+	width: 3rem;
+	height: 1rem;
 	position: absolute;
-	left: 0;
-	right: 0;
-	top: 0;
-	bottom: 0;
-	width: 100%;
-	height: 100%;
-	z-index: 202;
-	display: flex;
-	justify-content: center;
-	align-items: center;
+	z-index: 200;
+	bottom: -1rem;
+	right: 0.5rem;
+	transition: bottom 2s;
 
 	#alertBox {
-		width: 6rem;
-		height: auto;
-		border-radius: 10px;
+		width: 100%;
+		height: 1rem;
+		box-shadow: 0 0 2px red;
 		background: #fff;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
+		line-height: 1rem;
+		font-size: 0.3rem;
+		vertical-align: middle;
+		text-align: center;
+	}
 
-		#logoBox {
-			padding-top: 0.3rem;
-			width: 3rem;
-			height: 3rem;
-
-			img {
-				width: 3rem;
-				height: 3rem;
-			}
-		}
-		#alertDet {
-			height: 0.8rem;
-			position: relative;
-			font-size: 0.4rem;
-		}
-		#goBack {
-			width: 40%;
-			height: 1rem;
-			font-size: 0.35rem;
-			margin-bottom: 0.2rem;
-			text-align: center;
-			line-height: 1rem;
-			vertical-align: middle;;
-			background: #09e7ed;
-			border-radius: 4px;
-			box-shadow: 0 0 0 1px #888;
-		}
+	&::before {
+		content: '';
+		width: 2px;
+		height: 0.5rem;
+		position: relative;
+		left: 1rem;
+		top: 1rem;
+		background: #000;
+	}
+	&::after {
+		content: '';
+		width: 2px;
+		height: 0.5rem;
+		position: relative;
+		right: 1rem;
+		top: 1rem;
+		background: #000;
 	}
 }
+
+// #mengK {
+// 	position: absolute;
+// 	left: 0;
+// 	right: 0;
+// 	top: 0;
+// 	bottom: 0;
+// 	display: none;
+// 	width: 100%;
+// 	height: 100%;
+// 	z-index: 200;
+// }
+// #mengLL {
+// 	position: absolute;
+// 	left: 0;
+// 	right: 0;
+// 	top: 0;
+// 	bottom: 0;
+// 	width: 100%;
+// 	height: 100%;
+// 	z-index: 201;
+// 	background: #000;
+// 	opacity: 0.7;
+// }
+// #mengBox {
+// 	position: absolute;
+// 	left: 0;
+// 	right: 0;
+// 	top: 0;
+// 	bottom: 0;
+// 	width: 100%;
+// 	height: 100%;
+// 	z-index: 202;
+// 	display: flex;
+// 	justify-content: center;
+// 	align-items: center;
+
+// 	#alertBox {
+// 		width: 6rem;
+// 		height: auto;
+// 		border-radius: 10px;
+// 		background: #fff;
+// 		display: flex;
+// 		flex-direction: column;
+// 		justify-content: center;
+// 		align-items: center;
+
+// 		#logoBox {
+// 			padding-top: 0.3rem;
+// 			width: 3rem;
+// 			height: 3rem;
+
+// 			img {
+// 				width: 3rem;
+// 				height: 3rem;
+// 			}
+// 		}
+// 		#alertDet {
+// 			height: 0.8rem;
+// 			position: relative;
+// 			font-size: 0.4rem;
+// 		}
+// 		#goBack {
+// 			width: 40%;
+// 			height: 1rem;
+// 			font-size: 0.35rem;
+// 			margin-bottom: 0.2rem;
+// 			text-align: center;
+// 			line-height: 1rem;
+// 			vertical-align: middle;;
+// 			background: #09e7ed;
+// 			border-radius: 4px;
+// 			box-shadow: 0 0 0 1px #888;
+// 		}
+// 	}
+// }
