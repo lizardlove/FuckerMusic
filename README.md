@@ -1,4 +1,4 @@
-## FuckerMusic
+## VisualizationMusic
 
 ##### 一个可用户自定义音乐可视化+弹幕的单页应用
 
